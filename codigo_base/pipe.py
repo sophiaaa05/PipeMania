@@ -3,10 +3,11 @@
 # Além das funções e classes sugeridas, podem acrescentar outras que considerem pertinentes.
 
 # Grupo 00:
-# 00000 Nome1
-# 00000 Nome2
+# 106748 Inês Antunes
+# 106369 Sophia Alencar
 
-import sys
+
+from sys import stdin
 from search import (
     Problem,
     Node,
@@ -106,6 +107,22 @@ class PipeMania(Problem):
 
 if __name__ == "__main__":
     # TODO:
+
+    content = stdin.readlines()
+
+    matriz = []
+
+    for line in content:
+
+        elements = line.strip().split("\t")
+
+        elements = [str(element) for element in elements ]
+
+        matriz.append(elements)
+
+    print(matriz)
+
+
     # Ler o ficheiro do standard input,
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
