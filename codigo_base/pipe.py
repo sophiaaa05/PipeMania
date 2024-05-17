@@ -286,6 +286,95 @@ class PipeMania(Problem):
         
         
         
+
+        for row in range(len(state.board)):
+            for col in range(len(state.board[row])):
+                current_piece = state.board[col][row]
+                # piece_type = current_piece[0]
+                # side = current_piece[1]
+                # above, below = state.board.adjacent_vertical_values(row, col)
+                # left, right = state.board.adjacent_horizontal_values(row, col)
+                piece_location = (col,row)
+
+                if piece_location == up_left:
+                    if current_piece in ['FC','FD']:
+                        possible_actions.append((col,row,True))
+                    elif current_piece in ['FB' ,'FE']:
+                        possible_actions.append((col,row,False))
+
+                    elif current_piece == 'VC':
+                        possible_actions.append((col,row,True))
+                        possible_actions.append((col,row,False))
+                    elif current_piece == 'VE':
+                        possible_actions.append((col,row,False))
+                    elif current_piece == 'VD':
+                        possible_actions.append((col,row,True))
+
+                elif piece_location ==  down_left:
+                    if current_piece in ['FC','FE']:
+                        possible_actions.append((col,row,True))
+                    elif current_piece in ['FD', 'FB']:
+                        possible_actions.append((col,row,False))
+
+                    elif current_piece == 'VC':
+                        possible_actions.append((col,row,True))
+                    elif current_piece == 'VE':
+                        possible_actions.append((col,row,False))
+                        possible_actions.append((col,row,True))
+                    elif current_piece == 'VB':
+                        possible_actions.append((col,row,False))
+
+                elif piece_location ==  up_right:
+                    if current_piece in ['FC', 'FE']:
+                        possible_actions.append((col,row,False))
+                    elif current_piece in ['FD','FB']:
+                        possible_actions.append((col,row,True))
+
+                    elif current_piece == 'VC':
+                        possible_actions.append((col,row,False))
+                    elif current_piece == 'VE':
+                        possible_actions.append((col,row,False))
+                        possible_actions.append((col,row,True))
+                    elif current_piece == 'VB':
+                        possible_actions.append((col,row,True))
+
+                elif piece_location == down_right:
+                    if current_piece in ['FC', 'FD']:
+                        possible_actions.append((col,row,False))
+                    elif current_piece in ['FB' ,'FE']:
+                        possible_actions.append((col,row,True))
+
+                    elif current_piece == 'VC':
+                        possible_actions.append((col,row,True))
+                        possible_actions.append((col,row,False))
+                    elif current_piece == 'VE':
+                        possible_actions.append((col,row,True))
+                    elif current_piece == 'VD':
+                        possible_actions.append((col,row,False))
+                
+                elif col == 0 or col == len(state.board):
+                    if current_piece in ['LH','BE','FE','FD']:
+                        possible_actions.append((col,row,True))
+                        possible_actions.append((col,row,False))
+
+                    elif current_piece in ['BC','FC']:
+                        possible_actions.append((col,row,True))
+
+                    elif current_piece in ['BB','FB']:
+                        possible_actions.append((col,row,False))
+
+                elif row == 0 or row == len(state.board):
+                    if current_piece in ['LV', 'BC','FB','FC']:
+                        possible_actions.append((col,row,True))
+                        possible_actions.append((col,row,False))
+                    elif current_piece in ['BD','FD']:
+                        possible_actions.append((col,row,True))
+                    elif current_piece in ['BE','FE']:
+                        possible_actions.append((col,row,False))
+
+        return possible_actions
+                        
+
         
 
     def result(self, state: PipeManiaState, action):
@@ -295,7 +384,7 @@ class PipeMania(Problem):
         self.actions(state)."""
 
         row, col, clockwise = action
-        new_board = [list(row) for row in state.board]  
+        new_board = [list(col) for col in state.board]  
         if clockwise:
             #não sei porquê que não está a reconhecer as funções *angry emojis*
             new_board[row][col] = self.rotate_clockwise(new_board[row][col])
@@ -320,7 +409,7 @@ class PipeMania(Problem):
         # TODO
         pass
 
-    # TODO: outros metodos da classe
+    
 
 
 
