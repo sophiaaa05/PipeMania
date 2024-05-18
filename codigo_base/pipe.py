@@ -59,67 +59,71 @@ class Board:
         'None': 'None'
     }
     
-    # if str == 'FC':
-    #         return 'FE'
-    #     elif str == 'FB':
-    #         return 'FD'
-    #     elif str == 'FE':
-    #         return 'FB'
-    #     elif str == 'FD':
-    #         return 'FC'
-    #     elif str == 'BC':
-    #         return 'BE'
-    #     elif str == 'BB':
-    #         return 'BD'
-    #     elif str == 'BB':
-    #         return 'BB'
-    #     elif str == 'BD':
-    #         return 'BC'
-    #     elif str == 'VC':
-    #         return 'VE'
-    #     elif str == 'VB':
-    #         return 'VD'
-    #     elif str == 'VE':
-    #         return 'VB'
-    #     elif str == 'VD':
-    #         return 'VC'
-    #     elif str == 'LH':
-    #         return 'LV'
-    #     elif str == 'LV':
-    #         return 'LH'
-        
-
     def __init__(self, board):
-
         self.board = board
+        self.init_board()
 
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
-
         return self.board[col][row]
         
-
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
-
-        
-        below = self.get_value(row,col+1) if col < len(self.board)-1 else None
-        above = self.get_value(row,col-1) if col > 0 else None
-
-        
-        return above,below
+        below = self.get_value(row, col+1) if col < len(self.board)-1 else None
+        above = self.get_value(row, col-1) if col > 0 else None
+        return above, below
 
     def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-
-        left = self.get_value(row-1,col) if row > 0 else None
-        right = self.get_value(row+1,col) if row < len(self.board)-1 else None
-
-
-        return left,right
+        left = self.get_value(row-1, col) if row > 0 else None
+        right = self.get_value(row+1, col) if row < len(self.board[0])-1 else None
+        return left, right
         
+    def init_board(self):
+        up_left = (0, 0)
+        down_left = (0, len(self.board) - 1)
+        up_right = (len(self.board[0]) - 1, 0)
+        down_right = (len(self.board[0]) - 1, len(self.board) - 1)
+
+        for row in range(len(self.board)):
+            for col in range(len(self.board[row])):
+                current_piece = self.board[row][col]
+                piece_type = current_piece[0]
+                piece_location = (row, col)
+
+                if piece_location == up_left and piece_type == 'V':
+                    self.board[row][col] = 'VB'
+                elif piece_location == down_left and piece_type == 'V':
+                    self.board[row][col] = 'VD'
+                elif piece_location == up_right and piece_type == 'V':
+                    self.board[row][col] = 'VE'
+                elif piece_location == down_right and piece_type == 'V':
+                    self.board[row][col] = 'VC'
+                elif col == 0:
+                    if piece_type == 'L':
+                        self.board[row][col] = 'LV'
+                    elif piece_type == 'B':
+                        self.board[row][col] = 'BD'
+                elif col == len(self.board) - 1:
+                    if piece_type == 'L':
+                        self.board[row][col] = 'LV'
+                    elif piece_type == 'B':
+                        self.board[row][col] = 'BE'
+                elif row == 0:
+                    if piece_type == 'L':
+                        self.board[row][col] = 'LH'
+                    elif piece_type == 'B':
+                        self.board[row][col] = 'BB'
+                elif row == len(self.board) - 1:
+                    if piece_type == 'L':
+                        self.board[row][col] = 'LH'
+                    elif piece_type == 'B':
+                        self.board[row][col] = 'BC'
+                
+
+
 
     @staticmethod
     def parse_instance():
@@ -144,6 +148,7 @@ class Board:
 
             board.append(elements)
 
+
         return Board(board)
         
 
@@ -151,10 +156,13 @@ class Board:
 
 
 class PipeMania(Problem):
+
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
 
-        self.initial_state = PipeManiaState(board)
+        self.initial = PipeManiaState(board)
+    
+    
 
     def rotate_clockwise(self, name_pipe):
         """Rotate a pipe 90 degrees clockwise."""
@@ -185,197 +193,113 @@ class PipeMania(Problem):
         for row in range(len(state.board)):
             for col in range(len(state.board[row])):
                 current_piece = state.board[col][row]
+
+                above, below = state.board.adjacent_vertical_values(row, col)
+                left, right = state.board.adjacent_horizontal_values(row, col)
+
+                for rotation in [True, False]:  # True for clockwise, False for anticlockwise
+                    rotated_piece = self.rotate_clockwise(current_piece) if rotation else self.rotate_anticlockwise(current_piece)
+                    if self.is_correctly_connected(rotated_piece, above, below, left, right):
+                        possible_actions.append((row, col, rotation))
+
+
                 # piece_type = current_piece[0]
                 # side = current_piece[1]
-                # above, below = state.board.adjacent_vertical_values(row, col)
-                # left, right = state.board.adjacent_horizontal_values(row, col)
-                piece_location = (col,row)
-
-                if piece_location == up_left:
-                    if current_piece in ['FC','FD']:
-                        possible_actions.append((col,row,True))
-                    elif current_piece in ['FB' ,'FE']:
-                        possible_actions.append((col,row,False))
-
-                    elif current_piece == 'VC':
-                        possible_actions.append((col,row,True))
-                        possible_actions.append((col,row,False))
-                    elif current_piece == 'VE':
-                        possible_actions.append((col,row,False))
-                    elif current_piece == 'VD':
-                        possible_actions.append((col,row,True))
-
-                elif piece_location ==  down_left:
-                    if current_piece in ['FC','FE']:
-                        possible_actions.append((col,row,True))
-                    elif current_piece in ['FD', 'FB']:
-                        possible_actions.append((col,row,False))
-
-                    elif current_piece == 'VC':
-                        possible_actions.append((col,row,True))
-                    elif current_piece == 'VE':
-                        possible_actions.append((col,row,False))
-                        possible_actions.append((col,row,True))
-                    elif current_piece == 'VB':
-                        possible_actions.append((col,row,False))
-
-                elif piece_location ==  up_right:
-                    if current_piece in ['FC', 'FE']:
-                        possible_actions.append((col,row,False))
-                    elif current_piece in ['FD','FB']:
-                        possible_actions.append((col,row,True))
-
-                    elif current_piece == 'VC':
-                        possible_actions.append((col,row,False))
-                    elif current_piece == 'VE':
-                        possible_actions.append((col,row,False))
-                        possible_actions.append((col,row,True))
-                    elif current_piece == 'VB':
-                        possible_actions.append((col,row,True))
-
-                elif piece_location == down_right:
-                    if current_piece in ['FC', 'FD']:
-                        possible_actions.append((col,row,False))
-                    elif current_piece in ['FB' ,'FE']:
-                        possible_actions.append((col,row,True))
-
-                    elif current_piece == 'VC':
-                        possible_actions.append((col,row,True))
-                        possible_actions.append((col,row,False))
-                    elif current_piece == 'VE':
-                        possible_actions.append((col,row,True))
-                    elif current_piece == 'VD':
-                        possible_actions.append((col,row,False))
                 
-                elif col == 0 or col == len(state.board):
-                    if current_piece in ['LH','BE','FE','FD']:
-                        possible_actions.append((col,row,True))
-                        possible_actions.append((col,row,False))
+                # piece_location = (col,row)
 
-                    elif current_piece in ['BC','FC']:
-                        possible_actions.append((col,row,True))
+                # if piece_location == up_left:
+                #     if current_piece in {'FC','FD'}:
+                #         possible_actions.append((col,row,True))
+                #     elif current_piece in {'FB' ,'FE'}:
+                #         possible_actions.append((col,row,False))
 
-                    elif current_piece in ['BB','FB']:
-                        possible_actions.append((col,row,False))
+                #     elif current_piece == 'VC':
+                #         possible_actions.append((col,row,True))
+                #         possible_actions.append((col,row,False))
+                #     elif current_piece == 'VE':
+                #         possible_actions.append((col,row,False))
+                #     elif current_piece == 'VD':
+                #         possible_actions.append((col,row,True))
 
-                elif row == 0 or row == len(state.board):
-                    if current_piece in ['LV', 'BC','FB','FC']:
-                        possible_actions.append((col,row,True))
-                        possible_actions.append((col,row,False))
-                    elif current_piece in ['BD','FD']:
-                        possible_actions.append((col,row,True))
-                    elif current_piece in ['BE','FE']:
-                        possible_actions.append((col,row,False))
+                # elif piece_location ==  down_left:
+                #     if current_piece in {'FC','FE'}:
+                #         possible_actions.append((col,row,True))
+                #     elif current_piece in {'FD', 'FB'}:
+                #         possible_actions.append((col,row,False))
+
+                #     elif current_piece == 'VC':
+                #         possible_actions.append((col,row,True))
+                #     elif current_piece == 'VE':
+                #         possible_actions.append((col,row,False))
+                #         possible_actions.append((col,row,True))
+                #     elif current_piece == 'VB':
+                #         possible_actions.append((col,row,False))
+
+                # elif piece_location ==  up_right:
+                #     if current_piece in {'FC', 'FE'}:
+                #         possible_actions.append((col,row,False))
+                #     elif current_piece in {'FD','FB'}:
+                #         possible_actions.append((col,row,True))
+
+                #     elif current_piece == 'VC':
+                #         possible_actions.append((col,row,False))
+                #     elif current_piece == 'VE':
+                #         possible_actions.append((col,row,False))
+                #         possible_actions.append((col,row,True))
+                #     elif current_piece == 'VB':
+                #         possible_actions.append((col,row,True))
+
+                # elif piece_location == down_right:
+                #     if current_piece in {'FC', 'FD'}:
+                #         possible_actions.append((col,row,False))
+                #     elif current_piece in ['FB' ,'FE']:
+                #         possible_actions.append((col,row,True))
+
+                #     elif current_piece == 'VC':
+                #         possible_actions.append((col,row,True))
+                #         possible_actions.append((col,row,False))
+                #     elif current_piece == 'VE':
+                #         possible_actions.append((col,row,True))
+                #     elif current_piece == 'VD':
+                #         possible_actions.append((col,row,False))
+                
+                # elif col == 0 or col == len(state.board):
+                #     if current_piece in {'LH','BE','FE','FD'}:
+                #         possible_actions.append((col,row,True))
+                #         possible_actions.append((col,row,False))
+
+                #     elif current_piece in {'BC','FC'}:
+                #         possible_actions.append((col,row,True))
+
+                #     elif current_piece in {'BB','FB'}:
+                #         possible_actions.append((col,row,False))
+
+                # elif row == 0 or row == len(state.board):
+                #     if current_piece in {'LV', 'BC','FB','FC'}:
+                #         possible_actions.append((col,row,True))
+                #         possible_actions.append((col,row,False))
+                #     elif current_piece in {'BD','FD'}:
+                #         possible_actions.append((col,row,True))
+                #     elif current_piece in {'BE','FE'}:
+                #         possible_actions.append((col,row,False))
 
         return possible_actions
         
-    def is_incorrectly_connected(self : Board, row: int, col: int) -> bool:
-        """Verifica se uma peça está completamente conectada"""
-    
-        pipe = self.get_value(row, col)
-        above, down = self.adjacent_vertical_values(row, col)
-        left, right = self.adjacent_horizontal_values(row, col)
+    def is_correctly_connected(self, pipe, above, below, left, right):
+        """Verifica se uma peça está corretamente conectada."""
+        desc = Board.pipe_description
+        return (
+            (pipe == "None" or
+            (desc[pipe][LEFT] == (desc[left][RIGHT] if left else 0)) and
+            (desc[pipe][ABOVE] == (desc[above][DOWN] if above else 0)) and
+            (desc[pipe][RIGHT] == (desc[right][LEFT] if right else 0)) and
+            (desc[pipe][DOWN] == (desc[below][ABOVE] if below else 0)))
+        )
+
+
         
-        if(self.pipe_description[pipe][LEFT] == self.pipe_description[left][RIGHT] and 
-           self.pipe_description[pipe][ABOVE] == self.pipe_description[above][DOWN] and
-           self.pipe_description[pipe][RIGHT] == self.pipe_description[right][LEFT] and
-           self.pipe_description[pipe][DOWN] == self.pipe_description[down][ABOVE]):
-            return True
-        
-        return False
-        
-        
-        
-
-        for row in range(len(state.board)):
-            for col in range(len(state.board[row])):
-                current_piece = state.board[col][row]
-                # piece_type = current_piece[0]
-                # side = current_piece[1]
-                # above, below = state.board.adjacent_vertical_values(row, col)
-                # left, right = state.board.adjacent_horizontal_values(row, col)
-                piece_location = (col,row)
-
-                if piece_location == up_left:
-                    if current_piece in ['FC','FD']:
-                        possible_actions.append((col,row,True))
-                    elif current_piece in ['FB' ,'FE']:
-                        possible_actions.append((col,row,False))
-
-                    elif current_piece == 'VC':
-                        possible_actions.append((col,row,True))
-                        possible_actions.append((col,row,False))
-                    elif current_piece == 'VE':
-                        possible_actions.append((col,row,False))
-                    elif current_piece == 'VD':
-                        possible_actions.append((col,row,True))
-
-                elif piece_location ==  down_left:
-                    if current_piece in ['FC','FE']:
-                        possible_actions.append((col,row,True))
-                    elif current_piece in ['FD', 'FB']:
-                        possible_actions.append((col,row,False))
-
-                    elif current_piece == 'VC':
-                        possible_actions.append((col,row,True))
-                    elif current_piece == 'VE':
-                        possible_actions.append((col,row,False))
-                        possible_actions.append((col,row,True))
-                    elif current_piece == 'VB':
-                        possible_actions.append((col,row,False))
-
-                elif piece_location ==  up_right:
-                    if current_piece in ['FC', 'FE']:
-                        possible_actions.append((col,row,False))
-                    elif current_piece in ['FD','FB']:
-                        possible_actions.append((col,row,True))
-
-                    elif current_piece == 'VC':
-                        possible_actions.append((col,row,False))
-                    elif current_piece == 'VE':
-                        possible_actions.append((col,row,False))
-                        possible_actions.append((col,row,True))
-                    elif current_piece == 'VB':
-                        possible_actions.append((col,row,True))
-
-                elif piece_location == down_right:
-                    if current_piece in ['FC', 'FD']:
-                        possible_actions.append((col,row,False))
-                    elif current_piece in ['FB' ,'FE']:
-                        possible_actions.append((col,row,True))
-
-                    elif current_piece == 'VC':
-                        possible_actions.append((col,row,True))
-                        possible_actions.append((col,row,False))
-                    elif current_piece == 'VE':
-                        possible_actions.append((col,row,True))
-                    elif current_piece == 'VD':
-                        possible_actions.append((col,row,False))
-                
-                elif col == 0 or col == len(state.board):
-                    if current_piece in ['LH','BE','FE','FD']:
-                        possible_actions.append((col,row,True))
-                        possible_actions.append((col,row,False))
-
-                    elif current_piece in ['BC','FC']:
-                        possible_actions.append((col,row,True))
-
-                    elif current_piece in ['BB','FB']:
-                        possible_actions.append((col,row,False))
-
-                elif row == 0 or row == len(state.board):
-                    if current_piece in ['LV', 'BC','FB','FC']:
-                        possible_actions.append((col,row,True))
-                        possible_actions.append((col,row,False))
-                    elif current_piece in ['BD','FD']:
-                        possible_actions.append((col,row,True))
-                    elif current_piece in ['BE','FE']:
-                        possible_actions.append((col,row,False))
-
-        return possible_actions
                         
-
-        
 
     def result(self, state: PipeManiaState, action):
         """Retorna o estado resultante de executar a 'action' sobre
@@ -386,7 +310,6 @@ class PipeMania(Problem):
         row, col, clockwise = action
         new_board = [list(col) for col in state.board]  
         if clockwise:
-            #não sei porquê que não está a reconhecer as funções *angry emojis*
             new_board[row][col] = self.rotate_clockwise(new_board[row][col])
         else:
             new_board[row][col] = self.rotate_anticlockwise(new_board[row][col])
@@ -398,9 +321,9 @@ class PipeMania(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
 
-        for row in state.board:
+        for row in state.board.board:
             for col in row:
-                if self.is_incorrectly_connected(state, row, col): #TODO: esta função :)
+                if self.is_incorrectly_connected(state, row, col): 
                     return False
         return True
 
@@ -417,9 +340,19 @@ if __name__ == "__main__":
 
     initial_board = Board.parse_instance()  
     pipe_mania_problem = PipeMania(initial_board)
+    solution_node = depth_first_tree_search(pipe_mania_problem)
+    print(initial_board)
+
+    if solution_node:
+        print("Solution found:")
+        actions = solution_node.solution()
+        for action in actions:
+            print(action)
+    else:
+        print("No solution found.")
 
     #doesent work yet be patient
-   # solution_node = depth_first_tree_search(pipe_mania_problem)
+   # solution_node = depth_first_trese_search(pipe_mania_problem)
 
     # if solution_node:
     #     print("Solution found:")
@@ -427,7 +360,6 @@ if __name__ == "__main__":
     # else:
 
     #     print("No solution found.")
-
 
 
     #TODO:
