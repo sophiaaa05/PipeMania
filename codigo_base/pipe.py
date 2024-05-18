@@ -83,44 +83,46 @@ class Board:
         
     def init_board(self):
         up_left = (0, 0)
-        down_left = (0, len(self.board) - 1)
-        up_right = (len(self.board[0]) - 1, 0)
-        down_right = (len(self.board[0]) - 1, len(self.board) - 1)
+        up_right = (0, len(self.board)-1)
 
-        for row in range(len(self.board)):
-            for col in range(len(self.board[row])):
-                current_piece = self.board[row][col]
+        down_left = (len(self.board[0])-1, 0)
+
+        down_right = (len(self.board[0])-1, len(self.board)-1)
+
+        for col in range(len(self.board)):
+            for row in range(len(self.board[col])):
+                current_piece = self.board[col][row]
                 piece_type = current_piece[0]
-                piece_location = (row, col)
+                piece_location = (col, row)
 
                 if piece_location == up_left and piece_type == 'V':
-                    self.board[row][col] = 'VB'
-                elif piece_location == down_left and piece_type == 'V':
-                    self.board[row][col] = 'VD'
-                elif piece_location == up_right and piece_type == 'V':
-                    self.board[row][col] = 'VE'
-                elif piece_location == down_right and piece_type == 'V':
-                    self.board[row][col] = 'VC'
-                elif col == 0:
+                    self.board[col][row] = 'VB'
+                if piece_location == down_left and piece_type == 'V':
+                    self.board[col][row] = 'VD'
+                if piece_location == up_right and piece_type == 'V':
+                    self.board[col][row] = 'VE'
+                if piece_location == down_right and piece_type == 'V':
+                    self.board[col][row] = 'VC'
+                if col == 0:
                     if piece_type == 'L':
-                        self.board[row][col] = 'LV'
-                    elif piece_type == 'B':
-                        self.board[row][col] = 'BD'
-                elif col == len(self.board) - 1:
+                        self.board[col][row] = 'LV'
+                    if piece_type == 'B':
+                        self.board[col][row] = 'BD'
+                if col == len(self.board) - 1:
                     if piece_type == 'L':
-                        self.board[row][col] = 'LV'
-                    elif piece_type == 'B':
-                        self.board[row][col] = 'BE'
-                elif row == 0:
+                        self.board[col][row] = 'LV'
+                    if piece_type == 'B':
+                        self.board[col][row] = 'BE'
+                if row == 0:
                     if piece_type == 'L':
-                        self.board[row][col] = 'LH'
-                    elif piece_type == 'B':
-                        self.board[row][col] = 'BB'
-                elif row == len(self.board) - 1:
+                        self.board[col][row] = 'LH'
+                    if piece_type == 'B':
+                        self.board[col][row] = 'BB'
+                if row == len(self.board) - 1:
                     if piece_type == 'L':
-                        self.board[row][col] = 'LH'
-                    elif piece_type == 'B':
-                        self.board[row][col] = 'BC'
+                        self.board[col][row] = 'LH'
+                    if piece_type == 'B':
+                        self.board[col][row] = 'BC'
                 
 
 
@@ -150,6 +152,11 @@ class Board:
 
 
         return Board(board)
+
+    def __str__(self):
+        """Retorna uma string formatada do tabuleiro para impressão."""
+        cols = ['\t'.join(col) for col in self.board]
+        return '\n'.join(cols)
         
 
     # TODO: outros metodos da classe
@@ -193,6 +200,8 @@ class PipeMania(Problem):
         for row in range(len(state.board)):
             for col in range(len(state.board[row])):
                 current_piece = state.board[col][row]
+                piece_type = current_piece[0]
+                side = current_piece[1]
 
                 above, below = state.board.adjacent_vertical_values(row, col)
                 left, right = state.board.adjacent_horizontal_values(row, col)
@@ -203,8 +212,7 @@ class PipeMania(Problem):
                         possible_actions.append((row, col, rotation))
 
 
-                # piece_type = current_piece[0]
-                # side = current_piece[1]
+               
                 
                 # piece_location = (col,row)
 
@@ -341,15 +349,11 @@ if __name__ == "__main__":
     initial_board = Board.parse_instance()  
     pipe_mania_problem = PipeMania(initial_board)
     solution_node = depth_first_tree_search(pipe_mania_problem)
-    print(initial_board)
 
     if solution_node:
-        print("Solution found:")
-        actions = solution_node.solution()
-        for action in actions:
-            print(action)
-    else:
-        print("No solution found.")
+        
+        solution_board = solution_node.state.board
+        print(solution_board)
 
     #doesent work yet be patient
    # solution_node = depth_first_trese_search(pipe_mania_problem)
