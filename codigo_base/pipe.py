@@ -103,6 +103,7 @@ class Board:
                     self.board[col][row] = 'VE'
                 if piece_location == down_right and piece_type == 'V':
                     self.board[col][row] = 'VC'
+                
                 if col == 0:
                     if piece_type == 'L':
                         self.board[col][row] = 'LV'
@@ -110,9 +111,9 @@ class Board:
                         self.board[col][row] = 'BD'
                 if col == len(self.board) - 1:
                     if piece_type == 'L':
-                        self.board[col][row] = 'LV'
+                        self.board[col][row] = 'LH'
                     if piece_type == 'B':
-                        self.board[col][row] = 'BE'
+                        self.board[col][row] = 'BC'
                 if row == 0:
                     if piece_type == 'L':
                         self.board[col][row] = 'LH'
@@ -120,9 +121,10 @@ class Board:
                         self.board[col][row] = 'BB'
                 if row == len(self.board) - 1:
                     if piece_type == 'L':
-                        self.board[col][row] = 'LH'
+                        self.board[col][row] = 'LV'
                     if piece_type == 'B':
-                        self.board[col][row] = 'BC'
+                        self.board[col][row] = 'BE'
+                
                 
 
 
@@ -155,11 +157,9 @@ class Board:
 
     def __str__(self):
         """Retorna uma string formatada do tabuleiro para impressão."""
-        cols = ['\t'.join(col) for col in self.board]
-        return '\n'.join(cols)
-        
+        rows = ['\t'.join(row) for row in self.board]
+        return '\n'.join(rows)
 
-    # TODO: outros metodos da classe
 
 
 class PipeMania(Problem):
@@ -169,20 +169,18 @@ class PipeMania(Problem):
 
         self.initial = PipeManiaState(board)
     
-    
-
-    def rotate_clockwise(self, name_pipe):
+    def rotate_clockwise(self, name_pipe:str):
         """Rotate a pipe 90 degrees clockwise."""
-        if name_pipe not in self.piece_clockwise:
+        if name_pipe not in Board.piece_clockwise:
             return "None: ????"
-        return self.piece_clockwise(name_pipe)
+        return Board.piece_clockwise[name_pipe]
         
 
-    def rotate_anticlockwise(self, name_pipe):
+    def rotate_anticlockwise(self, name_pipe:str):
         """Rotate a str 90 degrees anti-clockwise."""
-        if name_pipe not in self.piece_anticlockwise:
+        if name_pipe not in Board.piece_anticlockwise:
             return "None: ????"
-        return self.piece_anticlockwise(name_pipe)
+        return Board.piece_anticlockwise[name_pipe]
         
 
 
@@ -192,14 +190,14 @@ class PipeMania(Problem):
 
         possible_actions = []
         up_left=(0,0)
-        down_left = (0,len(state.board))
-        up_right = (len(state.board),0)
-        down_right =(len(state.board),len(state.board))
+        down_left = (0,len(state.board.board)-1)
+        up_right = (len(state.board.board)-1,0)
+        down_right =(len(state.board.board)-1,len(state.board.board)-1)
         
 
-        for row in range(len(state.board)):
-            for col in range(len(state.board[row])):
-                current_piece = state.board[col][row]
+        for row in range(len(state.board.board)):
+            for col in range(len(state.board.board[row])):
+                current_piece = state.board.board[col][row]
                 piece_type = current_piece[0]
                 side = current_piece[1]
 
@@ -304,9 +302,6 @@ class PipeMania(Problem):
             (desc[pipe][RIGHT] == (desc[right][LEFT] if right else 0)) and
             (desc[pipe][DOWN] == (desc[below][ABOVE] if below else 0)))
         )
-
-
-        
                         
 
     def result(self, state: PipeManiaState, action):
@@ -329,11 +324,11 @@ class PipeMania(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
 
-        for row in state.board.board:
-            for col in row:
-                if self.is_incorrectly_connected(state, row, col): 
-                    return False
-        return True
+        # for row in state.board.board:
+        #     for col in row:
+        #         if self.is_incorrectly_connected(state, row, col): 
+        #             return False
+        # return True
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
@@ -348,22 +343,20 @@ if __name__ == "__main__":
 
     initial_board = Board.parse_instance()  
     pipe_mania_problem = PipeMania(initial_board)
-    solution_node = depth_first_tree_search(pipe_mania_problem)
+    # solution_node = depth_first_tree_search(pipe_mania_problem)
+    # solution_node = depth_first_tree_search(pipe_mania_problem)
+    
+    # Print the initial board
+    print(initial_board)
 
-    if solution_node:
-        
-        solution_board = solution_node.state.board
-        print(solution_board)
-
-    #doesent work yet be patient
-   # solution_node = depth_first_trese_search(pipe_mania_problem)
+    
 
     # if solution_node:
-    #     print("Solution found:")
-    
-    # else:
+        
+    #     solution_board = solution_node.state.board
+    #     print(solution_board)
 
-    #     print("No solution found.")
+
 
 
     #TODO:
