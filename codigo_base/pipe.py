@@ -70,60 +70,152 @@ class Board:
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
-        below = self.get_value(row, col+1) if col < len(self.board)-1 else None
-        above = self.get_value(row, col-1) if col > 0 else None
+        below = self.get_value(row, col+1) if col < len(self.board)-1 else 'None'
+        above = self.get_value(row, col-1) if col > 0 else 'None'
         return above, below
 
     def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        left = self.get_value(row-1, col) if row > 0 else None
-        right = self.get_value(row+1, col) if row < len(self.board[0])-1 else None
+        left = self.get_value(row-1, col) if row > 0 else 'None'
+        right = self.get_value(row+1, col) if row < len(self.board[0])-1 else 'None'
         return left, right
         
     def init_board(self):
         up_left = (0, 0)
+
         up_right = (0, len(self.board)-1)
 
         down_left = (len(self.board[0])-1, 0)
 
         down_right = (len(self.board[0])-1, len(self.board)-1)
 
+        
+
         for col in range(len(self.board)):
             for row in range(len(self.board[col])):
                 current_piece = self.board[col][row]
                 piece_type = current_piece[0]
                 piece_location = (col, row)
+                left,right = self.adjacent_horizontal_values(row,col)
+                above,below = self.adjacent_vertical_values(row,col)
 
-                if piece_location == up_left and piece_type == 'V':
-                    self.board[col][row] = 'VB'
-                if piece_location == down_left and piece_type == 'V':
-                    self.board[col][row] = 'VD'
-                if piece_location == up_right and piece_type == 'V':
-                    self.board[col][row] = 'VE'
-                if piece_location == down_right and piece_type == 'V':
-                    self.board[col][row] = 'VC'
+                if piece_location == up_left:
+
+                    if piece_type == 'V':
+                        self.board[col][row] = 'VB'
+
+                    if piece_type == 'F':
+                        if right[0] == 'F':
+                            self.board[col][row] = 'FB'
+                        if below[0] == 'F':
+                            self.board[col][row] = 'FD'
+
+                        
+                if piece_location == down_left:
+
+                    if piece_type == 'V':
+                        self.board[col][row] = 'VD'
+
+                    if piece_type == 'F':
+                        if right[0] == 'F':
+                            self.board[col][row] = 'FC'
+                        if above[0] == 'F':
+                            self.board[col][row] = 'FD'
+
+
+                if piece_location == up_right:
+
+                    if piece_type == 'V':
+                        self.board[col][row] = 'VE'
+
+                    if piece_type == 'F':
+                        if left[0] == 'F':
+                            self.board[col][row] = 'FB'
+                        if below[0] == 'F':
+                            self.board[col][row] = 'FE'
+
+                if piece_location == down_right:
+
+                    if piece_type == 'V':
+                        self.board[col][row] = 'VC'
+
+                    if piece_type == 'F':
+                        if left[0] == 'F':
+                            self.board[col][row] = 'FC'
+                        if above[0] == 'F':
+                            self.board[col][row] = 'FE'
                 
                 if col == 0:
-                    if piece_type == 'L':
-                        self.board[col][row] = 'LV'
-                    if piece_type == 'B':
-                        self.board[col][row] = 'BD'
-                if col == len(self.board) - 1:
-                    if piece_type == 'L':
-                        self.board[col][row] = 'LH'
-                    if piece_type == 'B':
-                        self.board[col][row] = 'BC'
-                if row == 0:
+
                     if piece_type == 'L':
                         self.board[col][row] = 'LH'
                     if piece_type == 'B':
                         self.board[col][row] = 'BB'
+                    
+                    if piece_type == 'F':
+
+                        if right[0] == 'F' and above[0] == 'F':
+                            self.board[col][row] = 'FB'
+                        if right[0] == 'F' and below[0] == 'F':
+                            self.board[col][row] = 'FC'
+                        if right[0] == 'F' and left[0] == 'F':
+                            self.board[col][row] = 'FB'
+
+
+                if col == len(self.board) - 1:
+
+                    if piece_type == 'L':
+                        self.board[col][row] = 'LH'
+                    if piece_type == 'B':
+                        self.board[col][row] = 'BC'
+
+                    if piece_type == 'F':
+
+                        if right[0] == 'F' and above[0] == 'F':
+                            self.board[col][row] = 'FE'
+                        if left[0] == 'F' and above[0] == 'F':
+                            self.board[col][row] = 'FD'
+                        if right[0] == 'F' and left[0] == 'F':
+                            self.board[col][row] = 'FC'
+                         
+                                              
+            
+                if row == 0:
+
+                    if piece_type == 'L':
+                        self.board[col][row] = 'LV'
+                    if piece_type == 'B':
+                        self.board[col][row] = 'BD'
+
+                    if piece_type == 'F':
+
+                        if right[0] == 'F' and below[0] == 'F':
+                            self.board[col][row] = 'FE'
+                        if left[0] == 'F' and below[0] == 'F':
+                            self.board[col][row] = 'FD'
+                        if above[0] == 'F' and below[0] == 'F':
+                            self.board[col][row] = 'FD'
+                        
+
                 if row == len(self.board) - 1:
+
                     if piece_type == 'L':
                         self.board[col][row] = 'LV'
                     if piece_type == 'B':
                         self.board[col][row] = 'BE'
+                    
+                    if piece_type == 'F':
+
+                        if left[0] == 'F' and above[0] == 'F':
+                            self.board[col][row] = 'FB'
+                        if left[0] == 'F' and below[0] == 'F':
+                            self.board[col][row] = 'FC'
+                        if above[0] == 'F' and below[0] == 'F':
+                            self.board[col][row] = 'FE' 
+                        
+                        
+                        
                 
                 
 
