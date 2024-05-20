@@ -133,9 +133,9 @@ class Board:
                         self.board[col][row] = 'VE'
 
                     if piece_type == 'F':
-                        if left[0] == 'F':
+                        if left[0] == 'F' or below == 'LV':
                             self.board[col][row] = 'FB'
-                        if below[0] == 'F':
+                        if below[0] == 'F' or left == 'LH':
                             self.board[col][row] = 'FE'
 
                 if piece_location == down_right:
@@ -144,9 +144,9 @@ class Board:
                         self.board[col][row] = 'VC'
 
                     if piece_type == 'F':
-                        if left[0] == 'F':
+                        if left[0] == 'F' or above == 'LV':
                             self.board[col][row] = 'FC'
-                        if above[0] == 'F':
+                        if above[0] == 'F' or left == 'LH':
                             self.board[col][row] = 'FE'
                 
                 if col == 0:
