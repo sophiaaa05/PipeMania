@@ -1,9 +1,9 @@
-# pipe.py: Template para implementação do projeto de Inteligência Artificial 2023/2024.
-# Devem alterar as classes e funções neste ficheiro de acordo com as instruções do enunciado.
-# Além das funções e classes sugeridas, podem acrescentar outras que considerem pertinentes.
+# pipe.py: Template para implementacao do projeto de Inteligencia Artificial 2023/2024.
+# Devem alterar as classes e funcoes neste ficheiro de acordo com as instrucoes do enunciado.
+# Além das funcoes e classes sugeridas, podem acrescentar outras que considerem pertinentes.
 
 # Grupo 00:
-# 106748 Inês Antunes
+# 106748 Ines Antunes
 # 106369 Sophia Alencar
 
 
@@ -38,7 +38,7 @@ class PipeManiaState:
 
 
 class Board:
-    """Representação interna de um tabuleiro de PipeMania."""
+    """Representacao interna de um tabuleiro de PipeMania."""
     
     pipe_description = {
         'FC': (0,1,0,0), 'FB': (0,0,0,1), 'FE': (1,0,0,0), 'FD': (0,0,1,0),
@@ -64,7 +64,7 @@ class Board:
         self.init_board()
 
     def get_value(self, row: int, col: int) -> str:
-        """Devolve o valor na respetiva posição do tabuleiro."""
+        """Devolve o valor na respetiva posicao do tabuleiro."""
         return self.board[col][row]
         
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
@@ -75,7 +75,7 @@ class Board:
         return above, below
 
     def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
-        """Devolve os valores imediatamente à esquerda e à direita,
+        """Devolve os valores imediatamente a esquerda e a direita,
         respectivamente."""
         left = self.get_value(row-1, col) if row > 0 else None
         right = self.get_value(row+1, col) if row < len(self.board[0])-1 else None
@@ -86,7 +86,6 @@ class Board:
         up_right = (0, len(self.board)-1)
 
         down_left = (len(self.board[0])-1, 0)
-
         down_right = (len(self.board[0])-1, len(self.board)-1)
 
         for col in range(len(self.board)):
@@ -156,7 +155,7 @@ class Board:
         return Board(board)
 
     def __str__(self):
-        """Retorna uma string formatada do tabuleiro para impressão."""
+        """Retorna uma string formatada do tabuleiro para impressao."""
         rows = ['\t'.join(row) for row in self.board]
         return '\n'.join(rows)
 
@@ -185,7 +184,7 @@ class PipeMania(Problem):
 
 
     def actions(self, state: PipeManiaState):
-        """Retorna uma lista de ações que podem ser executadas a
+        """Retorna uma lista de acoes que podem ser executadas a
         partir do estado passado como argumento."""
 
         possible_actions = []
@@ -206,112 +205,35 @@ class PipeMania(Problem):
 
                 for rotation in [True, False]:  # True for clockwise, False for anticlockwise
                     rotated_piece = self.rotate_clockwise(current_piece) if rotation else self.rotate_anticlockwise(current_piece)
-                    if self.is_correctly_connected(rotated_piece, above, below, left, right):
+                    if self.is_correctly_connected(state, row, col):
                         possible_actions.append((row, col, rotation))
 
 
-               
-                
-                # piece_location = (col,row)
-
-                # if piece_location == up_left:
-                #     if current_piece in {'FC','FD'}:
-                #         possible_actions.append((col,row,True))
-                #     elif current_piece in {'FB' ,'FE'}:
-                #         possible_actions.append((col,row,False))
-
-                #     elif current_piece == 'VC':
-                #         possible_actions.append((col,row,True))
-                #         possible_actions.append((col,row,False))
-                #     elif current_piece == 'VE':
-                #         possible_actions.append((col,row,False))
-                #     elif current_piece == 'VD':
-                #         possible_actions.append((col,row,True))
-
-                # elif piece_location ==  down_left:
-                #     if current_piece in {'FC','FE'}:
-                #         possible_actions.append((col,row,True))
-                #     elif current_piece in {'FD', 'FB'}:
-                #         possible_actions.append((col,row,False))
-
-                #     elif current_piece == 'VC':
-                #         possible_actions.append((col,row,True))
-                #     elif current_piece == 'VE':
-                #         possible_actions.append((col,row,False))
-                #         possible_actions.append((col,row,True))
-                #     elif current_piece == 'VB':
-                #         possible_actions.append((col,row,False))
-
-                # elif piece_location ==  up_right:
-                #     if current_piece in {'FC', 'FE'}:
-                #         possible_actions.append((col,row,False))
-                #     elif current_piece in {'FD','FB'}:
-                #         possible_actions.append((col,row,True))
-
-                #     elif current_piece == 'VC':
-                #         possible_actions.append((col,row,False))
-                #     elif current_piece == 'VE':
-                #         possible_actions.append((col,row,False))
-                #         possible_actions.append((col,row,True))
-                #     elif current_piece == 'VB':
-                #         possible_actions.append((col,row,True))
-
-                # elif piece_location == down_right:
-                #     if current_piece in {'FC', 'FD'}:
-                #         possible_actions.append((col,row,False))
-                #     elif current_piece in ['FB' ,'FE']:
-                #         possible_actions.append((col,row,True))
-
-                #     elif current_piece == 'VC':
-                #         possible_actions.append((col,row,True))
-                #         possible_actions.append((col,row,False))
-                #     elif current_piece == 'VE':
-                #         possible_actions.append((col,row,True))
-                #     elif current_piece == 'VD':
-                #         possible_actions.append((col,row,False))
-                
-                # elif col == 0 or col == len(state.board):
-                #     if current_piece in {'LH','BE','FE','FD'}:
-                #         possible_actions.append((col,row,True))
-                #         possible_actions.append((col,row,False))
-
-                #     elif current_piece in {'BC','FC'}:
-                #         possible_actions.append((col,row,True))
-
-                #     elif current_piece in {'BB','FB'}:
-                #         possible_actions.append((col,row,False))
-
-                # elif row == 0 or row == len(state.board):
-                #     if current_piece in {'LV', 'BC','FB','FC'}:
-                #         possible_actions.append((col,row,True))
-                #         possible_actions.append((col,row,False))
-                #     elif current_piece in {'BD','FD'}:
-                #         possible_actions.append((col,row,True))
-                #     elif current_piece in {'BE','FE'}:
-                #         possible_actions.append((col,row,False))
-
         return possible_actions
         
-    def is_correctly_connected(self, pipe, above, below, left, right):
-        """Verifica se uma peça está corretamente conectada."""
+    def is_correctly_connected(self, state: PipeManiaState, pipe, row: int, col: int):
+        """Verifica se uma peca esta corretamente conectada."""
         desc = Board.pipe_description
+        above, below = state.board.adjacent_vertical_values(row, col)
+        left, right = state.board.adjacent_horizontal_values(row, col)
+
         return (
-            (pipe == "None" or
             (desc[pipe][LEFT] == (desc[left][RIGHT] if left else 0)) and
             (desc[pipe][ABOVE] == (desc[above][DOWN] if above else 0)) and
             (desc[pipe][RIGHT] == (desc[right][LEFT] if right else 0)) and
-            (desc[pipe][DOWN] == (desc[below][ABOVE] if below else 0)))
+            (desc[pipe][DOWN] == (desc[below][ABOVE] if below else 0))
         )
+
                         
 
     def result(self, state: PipeManiaState, action):
         """Retorna o estado resultante de executar a 'action' sobre
-        'state' passado como argumento. A ação a executar deve ser uma
-        das presentes na lista obtida pela execução de
+        'state' passado como argumento. A acao a executar deve ser uma
+        das presentes na lista obtida pela execucao de
         self.actions(state)."""
 
         row, col, clockwise = action
-        new_board = [list(col) for col in state.board]  
+        new_board = [list(col) for col in state.board.board]  
         if clockwise:
             new_board[row][col] = self.rotate_clockwise(new_board[row][col])
         else:
@@ -320,18 +242,19 @@ class PipeMania(Problem):
         
 
     def goal_test(self, state: PipeManiaState):
-        """Retorna True se e só se o estado passado como argumento é
-        um estado objetivo. Deve verificar se todas as posições do tabuleiro
-        estão preenchidas de acordo com as regras do problema."""
+        """Retorna True se e so se o estado passado como argumento é
+        um estado objetivo. Deve verificar se todas as posicoes do tabuleiro
+        estao preenchidas de acordo com as regras do problema."""
 
-        # for row in state.board.board:
-        #     for col in row:
-        #         if self.is_incorrectly_connected(state, row, col): 
-        #             return False
-        # return True
+        for row in range(len(state.board.board)):
+            for col in range(len(state.board.board[row])):
+                pipe = state.board.get_value(row, col)
+                if not self.is_correctly_connected(state, pipe, row, col):
+                    return False
+        return True
 
     def h(self, node: Node):
-        """Função heuristica utilizada para a procura A*."""
+        """Funcao heuristica utilizada para a procura A*."""
         # TODO
         pass
 
@@ -343,25 +266,14 @@ if __name__ == "__main__":
 
     initial_board = Board.parse_instance()  
     pipe_mania_problem = PipeMania(initial_board)
+    solution_node = depth_first_tree_search(pipe_mania_problem)
     # solution_node = depth_first_tree_search(pipe_mania_problem)
-    # solution_node = depth_first_tree_search(pipe_mania_problem)
-    
-    # Print the initial board
-    print(initial_board)
-
-    
-
-    # if solution_node:
-        
+    # if solution_node:     
     #     solution_board = solution_node.state.board
     #     print(solution_board)
-
-
-
-
-    #TODO:
-    # Ler o ficheiro do standard input,
-    # Usar uma técnica de procura para resolver a instância,
-    # Retirar a solução a partir do nó resultante,
-    # Imprimir para o standard output no formato indicado.
+    is_goal = pipe_mania_problem.goal_test(pipe_mania_problem.initial)
+    
+    # Imprimir o resultado
+    print("O estado inicial é um estado objetivo?", is_goal)
+    print(initial_board)
     pass
