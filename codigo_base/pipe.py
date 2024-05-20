@@ -80,6 +80,8 @@ class Board:
         left = self.get_value(row-1, col) if row > 0 else 'None'
         right = self.get_value(row+1, col) if row < len(self.board[0])-1 else 'None'
         return left, right
+    
+    
         
     def init_board(self):
         up_left = (0, 0)
@@ -106,10 +108,11 @@ class Board:
                         self.board[col][row] = 'VB'
 
                     if piece_type == 'F':
-                        if right[0] == 'F':
+                        if right[0] == 'F' or below == 'LV':
                             self.board[col][row] = 'FB'
-                        if below[0] == 'F':
+                        if below[0] == 'F'or right == 'LH':
                             self.board[col][row] = 'FD'
+                        
 
                         
                 if piece_location == down_left:
@@ -118,9 +121,9 @@ class Board:
                         self.board[col][row] = 'VD'
 
                     if piece_type == 'F':
-                        if right[0] == 'F':
+                        if right[0] == 'F' or above == 'LV':
                             self.board[col][row] = 'FC'
-                        if above[0] == 'F':
+                        if above[0] == 'F' or right == 'LH':
                             self.board[col][row] = 'FD'
 
 
@@ -147,7 +150,7 @@ class Board:
                             self.board[col][row] = 'FE'
                 
                 if col == 0:
-
+                    # linha horizontal em cima
                     if piece_type == 'L':
                         self.board[col][row] = 'LH'
                     if piece_type == 'B':
@@ -164,7 +167,7 @@ class Board:
 
 
                 if col == len(self.board) - 1:
-
+                    #linha horizontal em baixo
                     if piece_type == 'L':
                         self.board[col][row] = 'LH'
                     if piece_type == 'B':
@@ -182,7 +185,7 @@ class Board:
                                               
             
                 if row == 0:
-
+                    #linha vertical esquerda
                     if piece_type == 'L':
                         self.board[col][row] = 'LV'
                     if piece_type == 'B':
@@ -199,7 +202,7 @@ class Board:
                         
 
                 if row == len(self.board) - 1:
-
+                    #linha vertical direita
                     if piece_type == 'L':
                         self.board[col][row] = 'LV'
                     if piece_type == 'B':
