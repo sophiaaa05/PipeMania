@@ -81,147 +81,199 @@ class Board:
         right = self.get_value(row+1, col) if row < len(self.board[0])-1 else 'None'
         return left, right
     
+    def resolve_remaining_pieces(self):
+        board_size = len(self.board)-1
+
+        for row in range(len(self.board) - 1):
+            for col in range(len(self.board) - 1):
+                current_piece = self.get_value(row,col)
+                piece_type = current_piece[0]
+                lock = current_piece[2]
+                left,right = self.adjacent_horizontal_values(col, row)
+                above,below = self.adjacent_vertical_values(col, row)
+
+                if lock == 'U':
+                    if piece_type == 'B':
+
     
         
     def init_board(self):
-        up_left = (0, 0)
+        board_size = len(self.board)-1
+        # up_left = (0, 0)
+        # up_right = (0, board_size)
+        # down_left = (board_size, 0)
+        # down_right = (board_size, board_size)
 
-        up_right = (0, len(self.board)-1)
+        #VERIFY BOARDERS
 
-        down_left = (len(self.board[0])-1, 0)
-        down_right = (len(self.board[0])-1, len(self.board)-1)
+        #UP LEFT
+        current_piece = self.board[0][0]
+        piece_type = current_piece[0]
+        left,right = self.adjacent_horizontal_values(0,0)
+        above,below = self.adjacent_vertical_values(0,0)
 
+        if  piece_type== 'V':
+            self.board[0][0] = 'VBL'
+
+        if piece_type == 'F':
+            if right[0] == 'F' or below[0] in {'L','B'} :
+                self.board[0][0] = 'FBL'
+            if below[0] == 'F'or right[0] in {'L','B'}:
+                self.board[0][0] = 'FDL'
+
+
+        #UP RIGHT
+        current_piece = self.board[0][board_size]
+        piece_type = current_piece[0]
+        left,right = self.adjacent_horizontal_values(board_size, 0)
+        above,below = self.adjacent_vertical_values(board_size, 0)
+
+        if current_piece[0] == 'V':
+            self.board[0][board_size] = 'VEL'
+
+        if piece_type == 'F':
+            if left[0] == 'F' or below[0] in {'L','B'}:
+                self.board[0][board_size] = 'FBL'
+            if below[0] == 'F' or left[0] in {'L','B'}:
+                self.board[0][board_size] = 'FEL'
+
+
+        #DOWN LEFT
+        current_piece = self.board[board_size][0]
+        piece_type = current_piece[0]
+        left,right = self.adjacent_horizontal_values(0,board_size)
+        above,below = self.adjacent_vertical_values(0,board_size)
+
+        if current_piece[0] == 'V':
+            self.board[board_size][0] = 'VDL'
+
+        if piece_type == 'F':
+  
+            if right[0] == 'F' or above in {'LV','BD'}:
+                self.board[board_size][0] = 'FCL'
+            if above[0] == 'F' or right in {'LH','BC'}:
+                self.board[board_size][0] = 'FDL'
+  
+
+        #DOWN RIGHT
+        current_piece = self.board[board_size][board_size]
+        piece_type = current_piece[0]
+        left,right = self.adjacent_horizontal_values(board_size,board_size)
+        above,below = self.adjacent_vertical_values(board_size,board_size)
+        if current_piece[0] == 'V':
+            self.board[board_size][board_size] = 'VCL'
         
+        if piece_type == 'F':
+            if left[0] == 'F' or above in {'L','B'}:
+                self.board[board_size][board_size] = 'FCL'
+            if above[0] == 'F' or left in {'L','B'}:
+                self.board[board_size][board_size] = 'FEL'
 
-        for col in range(len(self.board)):
-            for row in range(len(self.board[col])):
-                current_piece = self.board[col][row]
+        lados = [0,board_size]
+
+        # VERIFICA COLUNAS DA BORDA
+        for i in range(2):
+            for row in range(board_size):
+                current_piece = self.board[row][lados[i]]
                 piece_type = current_piece[0]
-                piece_location = (col, row)
-                left,right = self.adjacent_horizontal_values(row,col)
-                above,below = self.adjacent_vertical_values(row,col)
 
-                if piece_location == up_left:
-
-                    if piece_type == 'V':
-                        self.board[col][row] = 'VB'
-
-                    if piece_type == 'F':
-                        if right[0] == 'F' or below == 'LV':
-                            self.board[col][row] = 'FB'
-                        if below[0] == 'F'or right == 'LH':
-                            self.board[col][row] = 'FD'
-                        
-
-                        
-                if piece_location == down_left:
-
-                    if piece_type == 'V':
-                        self.board[col][row] = 'VD'
-
-                    if piece_type == 'F':
-                        if right[0] == 'F' or above == 'LV':
-                            self.board[col][row] = 'FC'
-                        if above[0] == 'F' or right == 'LH':
-                            self.board[col][row] = 'FD'
-
-
-                if piece_location == up_right:
-
-                    if piece_type == 'V':
-                        self.board[col][row] = 'VE'
-
-                    if piece_type == 'F':
-                        if left[0] == 'F' or below == 'LV':
-                            self.board[col][row] = 'FB'
-                        if below[0] == 'F' or left == 'LH':
-                            self.board[col][row] = 'FE'
-
-                if piece_location == down_right:
-
-                    if piece_type == 'V':
-                        self.board[col][row] = 'VC'
-
-                    if piece_type == 'F':
-                        if left[0] == 'F' or above == 'LV':
-                            self.board[col][row] = 'FC'
-                        if above[0] == 'F' or left == 'LH':
-                            self.board[col][row] = 'FE'
+                if piece_type == 'L':
+                        self.board[row][lados[i]] = 'LVL'
+                        continue
                 
-                if col == 0:
-                    # linha horizontal em cima
-                    if piece_type == 'L':
-                        self.board[col][row] = 'LH'
+                if lados[i] == 0:
+
                     if piece_type == 'B':
-                        self.board[col][row] = 'BB'
-                    
-                    if piece_type == 'F':
-
-                        if right[0] == 'F' and above[0] == 'F':
-                            self.board[col][row] = 'FB'
-                        if right[0] == 'F' and below[0] == 'F':
-                            self.board[col][row] = 'FC'
-                        if right[0] == 'F' and left[0] == 'F':
-                            self.board[col][row] = 'FB'
-
-
-                if col == len(self.board) - 1:
-                    #linha horizontal em baixo
-                    if piece_type == 'L':
-                        self.board[col][row] = 'LH'
-                    if piece_type == 'B':
-                        self.board[col][row] = 'BC'
-
-                    if piece_type == 'F':
-
-                        if right[0] == 'F' and above[0] == 'F':
-                            self.board[col][row] = 'FE'
-                        if left[0] == 'F' and above[0] == 'F':
-                            self.board[col][row] = 'FD'
-                        if right[0] == 'F' and left[0] == 'F':
-                            self.board[col][row] = 'FC'
-                         
-                                              
-            
-                if row == 0:
-                    #linha vertical esquerda
-                    if piece_type == 'L':
-                        self.board[col][row] = 'LV'
-                    if piece_type == 'B':
-                        self.board[col][row] = 'BD'
+                            self.board[row][lados[i]] = 'BDL'
+                            continue
 
                     if piece_type == 'F':
 
                         if right[0] == 'F' and below[0] == 'F':
-                            self.board[col][row] = 'FE'
+                            self.board[row][lados[i]] = 'FEL'
+                            continue
                         if left[0] == 'F' and below[0] == 'F':
-                            self.board[col][row] = 'FD'
+                            self.board[row][lados[i]] = 'FDL'
+                            continue
                         if above[0] == 'F' and below[0] == 'F':
-                            self.board[col][row] = 'FD'
-                        
+                            self.board[row][lados[i]] = 'FDL'
+                            continue
+                    
+                if lados[i] == board_size:
 
-                if row == len(self.board) - 1:
-                    #linha vertical direita
-                    if piece_type == 'L':
-                        self.board[col][row] = 'LV'
                     if piece_type == 'B':
-                        self.board[col][row] = 'BE'
+                        self.board[row][lados[i]] = 'BEL'
+                        continue
                     
                     if piece_type == 'F':
 
                         if left[0] == 'F' and above[0] == 'F':
-                            self.board[col][row] = 'FB'
+                            self.board[row][lados[i]] = 'FBL'
+                            continue
                         if left[0] == 'F' and below[0] == 'F':
-                            self.board[col][row] = 'FC'
+                            self.board[row][lados[i]] = 'FCL'
+                            continue
                         if above[0] == 'F' and below[0] == 'F':
-                            self.board[col][row] = 'FE' 
-                        
-                        
-                        
+                            self.board[row][lados[i]] = 'FEL'
+                            continue
+
+                
+
+        # VERIFICA LINHAS DA BORDA
+        for i in range(2):
+            for col in range(board_size):
+                current_piece = self.board[lados[i]][col]
+                piece_type = current_piece[0]
+
+                if piece_type == 'L':
+                        self.board[lados[i]][col] = 'LVL'
+                        continue
+                
+                if lados[i] == 0:
+                    if piece_type == 'B':
+                        self.board[lados[i]][col] = 'BBL'
+                        continue
+
+                    if piece_type == 'F':
+
+                        if right[0] == 'F' and above[0] == 'F':
+                            self.board[lados[i]][col] = 'FBL'
+                            continue
+                        if right[0] == 'F' and below[0] == 'F':
+                            self.board[lados[i]][col] = 'FCL'
+                            continue
+                        if right[0] == 'F' and left[0] == 'F':
+                            self.board[lados[i]][col] = 'FBL'
+                            continue
+                
+                if lados[i] == board_size:
+                
+                    if piece_type == 'B':
+                        self.board[lados[i]][col] = 'BCL'
+                        continue
+
+                    if piece_type == 'F':
+
+                        if right[0] == 'F' and above[0] == 'F':
+                            self.board[lados[i]][col] = 'FEL'
+                            continue
+                        if left[0] == 'F' and above[0] == 'F':
+                            self.board[lados[i]][col] = 'FDL'
+                            continue
+                        if right[0] == 'F' and left[0] == 'F':
+                            self.board[lados[i]][col] = 'FCL'
+                            continue
+
+        self.resolve_remaining_pieces()
                 
                 
 
 
+
+    # def resolve_pipes_unlocked(pipes_unlocked):
+    #     """Resolve os pipes na boarda que ficaram a faltar dar lock"""
+    #     for pipe in pipes_unlocked:
+    #         if( )
 
     @staticmethod
     def parse_instance():
@@ -242,7 +294,7 @@ class Board:
 
             elements = line.strip().split("\t")
 
-            elements = [str(element) for element in elements ]
+            elements = [str(element) + 'U' for element in elements ]
 
             board.append(elements)
 
@@ -251,7 +303,7 @@ class Board:
 
     def __str__(self):
         """Retorna uma string formatada do tabuleiro para impressao."""
-        rows = ['\t'.join(row) for row in self.board]
+        rows = ['\t'.join(element[:2] for element in row) for row in self.board]
         return '\n'.join(rows)
 
 
@@ -361,14 +413,14 @@ if __name__ == "__main__":
 
     initial_board = Board.parse_instance()  
     pipe_mania_problem = PipeMania(initial_board)
-    solution_node = depth_first_tree_search(pipe_mania_problem)
+    # solution_node = depth_first_tree_search(pipe_mania_problem)
     # solution_node = depth_first_tree_search(pipe_mania_problem)
     # if solution_node:     
     #     solution_board = solution_node.state.board
     #     print(solution_board)
-    is_goal = pipe_mania_problem.goal_test(pipe_mania_problem.initial)
+    # is_goal = pipe_mania_problem.goal_test(pipe_mania_problem.initial)
     
     # Imprimir o resultado
-    print("O estado inicial é um estado objetivo?", is_goal)
+   # print("O estado inicial é um estado objetivo?", is_goal)
     print(initial_board)
     pass
