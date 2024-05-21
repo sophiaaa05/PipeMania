@@ -129,11 +129,6 @@ class Board:
                     self.board[row][col] = 'FCL'
                     unsolved_pieces.remove((row, col))
 
-<<<<<<< HEAD
-                if lock == 'U':
-                    if piece_type == 'B':
-                        pass
-=======
                 elif not self.connected_left(left) and not self.connected_right(left) and is_locked == left[2] and is_locked == right[2]:
                     if below == 'None':
                         self.board[row][col] = 'FCL'
@@ -222,7 +217,6 @@ class Board:
                         # Linha Horizontal em cima
                         self.board[row][col] = 'VEL'
                 
->>>>>>> cd91a9b2c51c0f8cbf949c497152f887e744025b
 
         
     def init_board(self):
