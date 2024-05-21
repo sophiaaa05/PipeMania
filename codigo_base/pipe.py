@@ -144,6 +144,24 @@ class Board:
                     else:
                         self.board[row][col] = 'FEL'
                         unsolved_pieces.remove((row, col))
+                        
+            if piece_type == 'V':
+                if self.connected_left(left) and is_locked == left[2]:
+                    if below == 'None':
+                        # Linha Horizontal em baixo
+                        self.board[row][col] = 'VC'
+                    else:
+                        # Linha Horizontal em cima
+                        self.board[row][col] = 'VE'
+                
+                if not self.connected_left(left) and is_locked == left[2]:
+                    if below == 'None':
+                        # Linha Horizontal em baixo
+                        self.board[row][col] = 'VD'
+                    else:
+                        # Linha Horizontal em cima
+                        self.board[row][col] = 'VB'
+                
 
         
     def init_board(self):
