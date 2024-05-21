@@ -94,6 +94,7 @@ class Board:
 
                 if lock == 'U':
                     if piece_type == 'B':
+                        pass
 
     
         
@@ -164,9 +165,9 @@ class Board:
             self.board[board_size][board_size] = 'VCL'
         
         if piece_type == 'F':
-            if left[0] == 'F' or above in {'L','B'}:
+            if left[0] == 'F' or above[0] in {'L','B'}:
                 self.board[board_size][board_size] = 'FCL'
-            if above[0] == 'F' or left in {'L','B'}:
+            if above[0] == 'F' or left[0] in {'L','B'}:
                 self.board[board_size][board_size] = 'FEL'
 
         lados = [0,board_size]
