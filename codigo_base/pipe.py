@@ -44,7 +44,7 @@ class Board:
         'FC': (0,1,0,0), 'FB': (0,0,0,1), 'FE': (1,0,0,0), 'FD': (0,0,1,0),
         'BC': (1,1,1,0), 'BB': (1,0,1,1), 'BE': (1,1,0,1), 'BD': (0,1,1,1),
         'VC': (1,1,0,0), 'VB': (0,0,1,1), 'VE': (1,0,0,1), 'VD': (0,1,1,0),
-        'LH': (1,0,1,0), 'LV': (0,1,0,1), 'None': (0,0,0,0)
+        'LH': (1,0,1,0), 'LV': (0,1,0,1), 'Non': (0,0,0,0)
     }
     
     piece_clockwise = {
@@ -57,6 +57,10 @@ class Board:
         'FC': 'FE', 'FB': 'FD', 'FE': 'FB', 'FD': 'FC', 'BC': 'BE', 'BB': 'BE', 'BD': 'BC', 
         'VC': 'VE', 'VB': 'VD', 'VE': 'VB', 'VD': 'VC', 'LH': 'LV', 'LV': 'LH', 
         'None': 'None'
+    }
+    
+    f_locking = {
+             
     }
     
     def __init__(self, board):
@@ -81,24 +85,70 @@ class Board:
         right = self.get_value(row+1, col) if row < len(self.board[0])-1 else 'None'
         return left, right
     
-    def resolve_remaining_pieces(self):
+    def connected_left(self, pipe: str):
+        return self.pipe_description[pipe[:-1]][RIGHT] == 1
+    
+    def connected_right(self, pipe:str):
+        return self.pipe_description[pipe[:-1]][LEFT] == 1
+    
+    def connected_above(self, pipe: str):
+        return self.pipe_description[pipe[:-1]][DOWN] == 1
+
+    def connected_down(self, pipe: str):
+        return self.pipe_description[pipe[:-1]][ABOVE] == 1
+    
+    def resolve_remaining_boarder_pieces(self, unsolved_pieces: list):
         board_size = len(self.board)-1
 
-        for row in range(len(self.board) - 1):
-            for col in range(len(self.board) - 1):
-                current_piece = self.get_value(row,col)
-                piece_type = current_piece[0]
-                lock = current_piece[2]
-                left,right = self.adjacent_horizontal_values(col, row)
-                above,below = self.adjacent_vertical_values(col, row)
+        for coord in unsolved_pieces:
+            print(coord)
+            row = coord[0]
+            col = coord[1]
+            current_piece = self.board[row][col]
+            print(current_piece)
+            print(" ")
+            piece_type = current_piece[0]
+            is_locked = 'L'
+            left,right = self.adjacent_horizontal_values(coord[1],coord[0])
+            above,below = self.adjacent_vertical_values(coord[1],coord[0])
+            
+            if piece_type == 'F':
+                if self.connected_left(left) and is_locked == left[2]:
+                    self.board[row][col] = 'FEL'
+                    unsolved_pieces.remove((row, col))
+            
+                elif self.connected_right(right) and is_locked == right[2]:
+                    self.board[row][col] = 'FDL'
+                    unsolved_pieces.remove((row, col))
+                
+                elif self.connected_down(below) and is_locked == below[2]:
+                    self.board[row][col] = 'FBL'
+                    unsolved_pieces.remove((row, col))
+                
+                elif self.connected_above(above) and is_locked == above[2]:
+                    self.board[row][col] = 'FCL'
+                    unsolved_pieces.remove((row, col))
 
-                if lock == 'U':
-                    if piece_type == 'B':
+                elif not self.connected_left(left) and not self.connected_right(left) and is_locked == left[2] and is_locked == right[2]:
+                    if below == 'None':
+                        self.board[row][col] = 'FCL'
+                        unsolved_pieces.remove((row, col))
+                    else:
+                        self.board[row][col] = 'FBL'
+                        unsolved_pieces.remove((row, col))
+                
+                elif not self.connected_above(above) and not self.connected_down(below) and is_locked == above[2] and is_locked == below[2]:
+                    if left == 'None':
+                        self.board[row][col] = 'FDL'
+                        unsolved_pieces.remove((row, col))
+                    else:
+                        self.board[row][col] = 'FEL'
+                        unsolved_pieces.remove((row, col))
 
-    
         
     def init_board(self):
         board_size = len(self.board)-1
+        unlocked_pieces = []
         # up_left = (0, 0)
         # up_right = (0, board_size)
         # down_left = (board_size, 0)
@@ -112,7 +162,7 @@ class Board:
         left,right = self.adjacent_horizontal_values(0,0)
         above,below = self.adjacent_vertical_values(0,0)
 
-        if  piece_type== 'V':
+        if  piece_type == 'V':
             self.board[0][0] = 'VBL'
 
         if piece_type == 'F':
@@ -120,6 +170,7 @@ class Board:
                 self.board[0][0] = 'FBL'
             if below[0] == 'F'or right[0] in {'L','B'}:
                 self.board[0][0] = 'FDL'
+            else: unlocked_pieces.append((0,0))
 
 
         #UP RIGHT
@@ -136,6 +187,7 @@ class Board:
                 self.board[0][board_size] = 'FBL'
             if below[0] == 'F' or left[0] in {'L','B'}:
                 self.board[0][board_size] = 'FEL'
+            else: unlocked_pieces.append((0,board_size))
 
 
         #DOWN LEFT
@@ -153,6 +205,7 @@ class Board:
                 self.board[board_size][0] = 'FCL'
             if above[0] == 'F' or right in {'LH','BC'}:
                 self.board[board_size][0] = 'FDL'
+            else: unlocked_pieces.append((board_size,0))
   
 
         #DOWN RIGHT
@@ -168,12 +221,13 @@ class Board:
                 self.board[board_size][board_size] = 'FCL'
             if above[0] == 'F' or left in {'L','B'}:
                 self.board[board_size][board_size] = 'FEL'
+            else: unlocked_pieces.append((board_size,board_size))
 
         lados = [0,board_size]
 
         # VERIFICA COLUNAS DA BORDA
         for i in range(2):
-            for row in range(board_size):
+            for row in range(board_size + 1)[1:-1]:
                 current_piece = self.board[row][lados[i]]
                 piece_type = current_piece[0]
 
@@ -182,7 +236,6 @@ class Board:
                         continue
                 
                 if lados[i] == 0:
-
                     if piece_type == 'B':
                             self.board[row][lados[i]] = 'BDL'
                             continue
@@ -216,12 +269,13 @@ class Board:
                         if above[0] == 'F' and below[0] == 'F':
                             self.board[row][lados[i]] = 'FEL'
                             continue
-
+                        
+                else: unlocked_pieces.append((row,lados[i]))
                 
 
         # VERIFICA LINHAS DA BORDA
         for i in range(2):
-            for col in range(board_size):
+            for col in range(board_size + 1)[1:-1]:
                 current_piece = self.board[lados[i]][col]
                 piece_type = current_piece[0]
 
@@ -263,8 +317,10 @@ class Board:
                         if right[0] == 'F' and left[0] == 'F':
                             self.board[lados[i]][col] = 'FCL'
                             continue
+                        
+                else: unlocked_pieces.append((lados[i], col))
 
-        self.resolve_remaining_pieces()
+        self.resolve_remaining_boarder_pieces(unlocked_pieces)
                 
                 
 
@@ -365,10 +421,10 @@ class PipeMania(Problem):
         left, right = state.board.adjacent_horizontal_values(row, col)
 
         return (
-            (desc[pipe][LEFT] == (desc[left][RIGHT] if left else 0)) and
-            (desc[pipe][ABOVE] == (desc[above][DOWN] if above else 0)) and
-            (desc[pipe][RIGHT] == (desc[right][LEFT] if right else 0)) and
-            (desc[pipe][DOWN] == (desc[below][ABOVE] if below else 0))
+            (desc[pipe [:-1]][LEFT] == (desc[left][RIGHT] if left else 0)) and
+            (desc[pipe [:-1]][ABOVE] == (desc[above][DOWN] if above else 0)) and
+            (desc[pipe [:-1]][RIGHT] == (desc[right][LEFT] if right else 0)) and
+            (desc[pipe [:-1]][DOWN] == (desc[below][ABOVE] if below else 0))
         )
 
                         
