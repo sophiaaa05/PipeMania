@@ -146,21 +146,76 @@ class Board:
                         unsolved_pieces.remove((row, col))
                         
             if piece_type == 'V':
+                # Left Restrictions
                 if self.connected_left(left) and is_locked == left[2]:
                     if below == 'None':
                         # Linha Horizontal em baixo
-                        self.board[row][col] = 'VC'
+                        self.board[row][col] = 'VCL'
                     else:
                         # Linha Horizontal em cima
-                        self.board[row][col] = 'VE'
+                        self.board[row][col] = 'VEL'
                 
                 if not self.connected_left(left) and is_locked == left[2]:
                     if below == 'None':
                         # Linha Horizontal em baixo
-                        self.board[row][col] = 'VD'
+                        self.board[row][col] = 'VDL'
                     else:
                         # Linha Horizontal em cima
-                        self.board[row][col] = 'VB'
+                        self.board[row][col] = 'VBL'
+                        
+                        
+                # Right Restrictions
+                if self.connected_right(right) and is_locked == right[2]:
+                    if below == 'None':
+                        # Linha Horizontal em baixo
+                        self.board[row][col] = 'VDL'
+                    else:
+                        # Linha Horizontal em cima
+                        self.board[row][col] = 'VBL'
+                
+                if not self.connected_right(right) and is_locked == right[2]:
+                    if below == 'None':
+                        # Linha Horizontal em baixo
+                        self.board[row][col] = 'VCL'
+                    else:
+                        # Linha Horizontal em cima
+                        self.board[row][col] = 'VEL'
+                        
+                        
+                # Below Restrictions
+                if self.connected_down(below) and is_locked == below[2]:
+                    if left == 'None':
+                        # Linha Verica esquerda
+                        self.board[row][col] = 'VBL'
+                    else:
+                        # Linha Vertical direita
+                        self.board[row][col] = 'VEL'
+                        
+                if not self.connected_down(below) and is_locked == below[2]:
+                    if left == 'None':
+                        # Linha Horizontal em baixo
+                        self.board[row][col] = 'VDL'
+                    else:
+                        # Linha Horizontal em cima
+                        self.board[row][col] = 'VCL'
+                 
+                        
+                # Above Restrictions
+                if self.connected_above(above) and is_locked == above[2]:
+                    if left == 'None':
+                        # Linha Verica esquerda
+                        self.board[row][col] = 'VDL'
+                    else:
+                        # Linha Vertical direita
+                        self.board[row][col] = 'VCL'
+                        
+                if not self.connected_right(right) and is_locked == right[2]:
+                    if left == 'None':
+                        # Linha Horizontal em baixo
+                        self.board[row][col] = 'VBL'
+                    else:
+                        # Linha Horizontal em cima
+                        self.board[row][col] = 'VEL'
                 
 
         
