@@ -1,0 +1,8 @@
+1,2c1,4
+< VB	VE
+< FC	FC
+---
+> [['VBL', 'VEL'], ['FCL', 'FCL']]
+>  
+> VBL	VEL
+> FCL	FCL

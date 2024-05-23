@@ -1,0 +1,7 @@
+[['VBL', 'FEL', 'VBL', 'LHL', 'FEL'], ['LVL', 'FCU', 'BBU', 'LHU', 'VEL'], ['BDL', 'VBU', 'BCU', 'FCU', 'LVL'], ['VDL', 'BDU', 'BDU', 'VDU', 'LVL'], ['FDL', 'VCL', 'FDL', 'VCL', 'FCL']]
+ 
+VBL	FEL	VBL	LHL	FEL
+LVL	FCU	BBU	LHL	VEL
+BDL	VBU	BCU	FCU	LVL
+VDL	BDU	BCL	VEL	LVL
+FDL	VCL	FDL	VCL	FCL

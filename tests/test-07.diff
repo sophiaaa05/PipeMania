@@ -1,0 +1,12 @@
+1,4c1,6
+< FD	BB	BB	FE
+< FD	BE	FC	FB
+< VB	BC	BB	BE
+< FC	FD	VC	FC
+---
+> [['FDL', 'BBL', 'BBL', 'FEL'], ['FDL', 'BDU', 'FDU', 'FBL'], ['VBL', 'BCU', 'BDU', 'BEL'], ['FCL', 'FDL', 'VCL', 'FCL']]
+>  
+> FDL	BBL	BBL	FEL
+> FDL	BDU	FCL	FBL
+> VBL	BCL	BBL	BEL
+> FCL	FDL	VCL	FCL
