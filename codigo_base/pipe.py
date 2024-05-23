@@ -92,7 +92,135 @@ class Board:
     
     def connected_above(self, pipe: str):
         return self.pipe_description[pipe[:-1]][DOWN] == 1
+    def actions_pieces(self, unsolved_pieces: list):
+        
+        possible_actions = []
+        
+        for unsolved_piece in unsolved_pieces:
+            
+            actions_for_piece = []
+            actions_for_piece.append(unsolved_piece)
+            current_piece = self.board[unsolved_piece[0]][unsolved_piece[1]]
+            is_locked = 'L'
+            is_none = 'n'
+            left, right = self.adjacent_horizontal_values(unsolved_piece[1], unsolved_piece[0])
+            above, below = self.adjacent_vertical_values(unsolved_piece[1], unsolved_piece[0])
+            connected_left = self.connected_left(left)
+            connected_right = self.connected_right(right)
+            connected_below = self.connected_down(below)
+            connected_above = self.connected_above(above)
+            piece_type = current_piece[0]
+                    
+            if piece_type == 'F':
+                
+                actions_for_piece.append('FCL')
+                actions_for_piece.append('FBL')
+                actions_for_piece.append('FEL')
+                actions_for_piece.append('FDL')
+                
+                if (not connected_above and (is_locked == above[2] or is_none == above[2])) or above[0] == 'F':
+                    if 'FCL' in actions_for_piece:
+                        actions_for_piece.remove('FCL')
+                
+                if (not connected_below and (is_locked == below[2] or is_none == below[2])) or below[0] == 'F':
+                    if 'FBL' in actions_for_piece:
+                        actions_for_piece.remove('FBL')
+                        
+                if (not connected_left and (is_locked == left[2] or is_none == left[2])) or left[0] == 'F':
+                    if 'FEL' in actions_for_piece:
+                        actions_for_piece.remove('FEL')
+                        
+                if (not connected_right and (is_locked == right[2] or is_none == right[2])) or right[0] == 'F':
+                    if 'FDL' in actions_for_piece:
+                        actions_for_piece.remove('FDL')
+                    
+            elif piece_type == 'B':
+                
+                actions_for_piece.append('BCL')
+                actions_for_piece.append('BBL')
+                actions_for_piece.append('BEL')
+                actions_for_piece.append('BDL')
+                
+                
+                if ( connected_above and is_locked == above[2]):
+                    if 'BBL' in actions_for_piece:
+                        actions_for_piece.remove('BBL')
+                
+                if ( connected_below and is_locked == below[2]):
+                    if 'BCL' in actions_for_piece:
+                        actions_for_piece.remove('BCL')
+                
+                if ( connected_right and is_locked == right[2]):
+                    if 'BEL' in actions_for_piece:
+                        actions_for_piece.remove('BEL')
+                        
+                if ( connected_left and is_locked == left[2]):
+                    if 'BDL' in actions_for_piece:
+                        actions_for_piece.remove('BDL')
+                    
+            elif piece_type == 'L':
+                
+                actions_for_piece.append('LHL')
+                actions_for_piece.append('LVL')
+                
+                if (connected_right and is_locked == right[2]) or (connected_left and is_locked == left[2]):
+                    if 'LVL' in actions_for_piece:
+                        actions_for_piece.remove('LVL')
+                        
+                if ( connected_above and is_locked == above[2]) or (connected_below and is_locked == below[2]):
+                    if 'LHL' in actions_for_piece:
+                        actions_for_piece.remove('LHL')
+                
+                if (not connected_right and is_locked == right[2]) or (not connected_left and is_locked == left[2]):
+                    if 'LHL' in actions_for_piece:
+                        actions_for_piece.remove('LHL')
+                
+                if (not connected_above and is_locked == above[2]) or (not connected_below and is_locked == below[2]):
+                    if 'LVL' in actions_for_piece:
+                        actions_for_piece.remove('LVL')
+                
+            elif piece_type == 'V':
+                
+                actions_for_piece.append('VCL')
+                actions_for_piece.append('VBL')
+                actions_for_piece.append('VEL')
+                actions_for_piece.append('VDL')
+                
+                if (connected_above and is_locked == above[2]) or (not connected_below and is_locked == below[2]):
+                    
+                    if 'VBL' in actions_for_piece:
+                        actions_for_piece.remove('VBL')
 
+                    if 'VEL' in actions_for_piece:
+                        actions_for_piece.remove('VEL')
+                
+                if (connected_below and is_locked == below[2]) or (not connected_above and is_locked == above[2]):
+                    
+                    if 'VCL' in actions_for_piece:
+                        actions_for_piece.remove('VCL')
+
+                    if 'VDL' in actions_for_piece:
+                        actions_for_piece.remove('VDL')
+                
+                if (connected_left and is_locked == left[2]) or (not connected_right and is_locked == right[2]):
+                    
+                    if 'VBL' in actions_for_piece:
+                        actions_for_piece.remove('VBL')
+
+                    if 'VDL' in actions_for_piece:
+                        actions_for_piece.remove('VDL')
+                
+                if (connected_right and is_locked == right[2]) or (connected_left and is_locked == left[2]):
+                    
+                    if 'VCL' in actions_for_piece:
+                        actions_for_piece.remove('VCL')
+
+                    if 'VEL' in actions_for_piece:
+                        actions_for_piece.remove('VEL')
+                        
+            possible_actions.append(actions_for_piece)
+    
+        return possible_actions    
     def connected_down(self, pipe: str):
         return self.pipe_description[pipe[:-1]][ABOVE] == 1
     
