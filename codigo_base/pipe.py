@@ -1048,7 +1048,7 @@ class Board:
 
     def __str__(self):
         """Retorna uma string formatada do tabuleiro para impressao."""
-        rows = ['\t'.join(element for element in row) for row in self.board]
+        rows = ['\t'.join(element[:2] for element in row) for row in self.board]
         return '\n'.join(rows)
 
 class PipeMania(Problem):
