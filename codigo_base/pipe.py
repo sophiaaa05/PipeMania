@@ -59,10 +59,6 @@ class Board:
         'None': 'None'
     }
     
-    f_locking = {
-             
-    }
-    
     def __init__(self, board):
         self.board = board
         self.init_board()
@@ -96,8 +92,6 @@ class Board:
 
     def connected_down(self, pipe: str):
         return self.pipe_description[pipe[:-1]][ABOVE] == 1
-    
-
     
     def loop_restrictions(self,unsolved_pieces: list):
         board_size = len(self.board)
@@ -146,41 +140,38 @@ class Board:
                                 unsolved_pieces.remove(coord)
                             
 
-                        elif ((not connected_above and is_locked == above[2]) or above[0] == 'F') and \
-                        ((not connected_right and is_locked == right[2]) or right[0] == 'F') and \
-                        ((not connected_below and is_locked == below[2]) or below[0] == 'F'):
+                        elif ((not connected_above and (is_locked == above[2] or is_none == above[2])) or above[0] == 'F') and \
+                        ((not connected_right and (is_locked == right[2] or is_none == right[2])) or right[0] == 'F') and \
+                        ((not connected_below and (is_locked == below[2] or is_none == below[2])) or below[0] == 'F'):
                             self.board[row][col] = 'FEL'
                             if coord in unsolved_pieces:
                                 unsolved_pieces.remove(coord)
                             
 
-                        elif ((not connected_below and is_locked == below[2]) or below[0] == 'F') and \
-                        ((not connected_left and is_locked == left[2]) or left[0] == 'F') and \
-                        ((not connected_above and is_locked == above[2]) or above[0] == 'F'):
+                        elif ((not connected_below and (is_locked == below[2] or is_none == below[2])) or below[0] == 'F') and \
+                        ((not connected_left and (is_locked == left[2] or is_none == left[2])) or left[0] == 'F') and \
+                        ((not connected_above and (is_locked == above[2] or is_none == above[2])) or above[0] == 'F'):
                             self.board[row][col] = 'FDL'
                             if coord in unsolved_pieces:
                                 unsolved_pieces.remove(coord)
                         
-                        elif ((not connected_right and is_locked == right[2]) or right[0] == 'F') and \
-                        ((not connected_left and is_locked == left[2]) or left[0] == 'F') and \
-                        ((not connected_below and is_locked == below[2]) or below[0] == 'F'):
+                        elif ((not connected_right and (is_locked == right[2] or is_none == right[2])) or right[0] == 'F') and \
+                        ((not connected_left and (is_locked == left[2] or is_none == left[2])) or left[0] == 'F') and \
+                        ((not connected_below and (is_locked == below[2] or is_none == below[2])) or below[0] == 'F'):
                             self.board[row][col] = 'FCL'
                             if coord in unsolved_pieces:
                                 unsolved_pieces.remove(coord)
                         
-                        elif ((not connected_above and is_locked == above[2]) or above[0] == 'F') and \
-                        ((not connected_left and is_locked == left[2]) or left[0] == 'F') and \
-                        ((not connected_right and is_locked == right[2]) or right[0] == 'F'):
+                        elif ((not connected_above and (is_locked == above[2] or is_none == above[2])) or above[0] == 'F') and \
+                        ((not connected_left and (is_locked == left[2] or is_none == left[2])) or left[0] == 'F') and \
+                        ((not connected_right and (is_locked == right[2] or is_none == right[2])) or right[0] == 'F'):
                             self.board[row][col] = 'FBL'
                             if coord in unsolved_pieces:
                                 unsolved_pieces.remove(coord)
                             
-                        else:
-                            
+                        else:                          
                             unsolved_pieces.append(coord)
                             
-                            
-
                     elif piece_type == 'B':
                         if (not connected_above and is_locked== above[2]):
                             self.board[row][col] = 'BBL'
@@ -193,7 +184,6 @@ class Board:
                                 unsolved_pieces.remove(coord)
 
                         elif(not connected_right and is_locked == right[2]):
-                           
                             self.board[row][col] = 'BEL'
                             if coord in unsolved_pieces:
                                 unsolved_pieces.remove(coord)
@@ -261,6 +251,11 @@ class Board:
                     elif piece_type == 'V':
 
                         #VDL
+                        if (connected_above and is_locked == above[2]) and (connected_right and is_locked == right[2]):
+                            self.board[row][col] = 'VDL'
+                            if coord in unsolved_pieces:
+                                unsolved_pieces.remove(coord)
+                                continue
                         
                         if(connected_above and is_locked == above[2]):
                             if((connected_right and is_locked == right[2]) or (not connected_left and is_locked == left[2])):
@@ -290,9 +285,13 @@ class Board:
 
                         #VEL
 
-                        
-                        elif (connected_below and is_locked == below[2]):
+                        if (connected_left and is_locked == left[2]) and (connected_below and is_locked == below[2]):
+                            self.board[row][col] = 'VEL'
+                            if coord in unsolved_pieces:
+                                unsolved_pieces.remove(coord)
+                                continue
                             
+                        elif (connected_below and is_locked == below[2]):                            
                             if((not connected_right and (is_locked == right[2] or is_none == right[2])) or (connected_left and is_locked == left[2])):
                                 self.board[row][col] = 'VEL'
                                 if coord in unsolved_pieces:
@@ -319,10 +318,15 @@ class Board:
 
                         
                         #VBL
+                        
+                        if (connected_below and is_locked == below[2]) and (connected_right and is_locked == right[2]):
+                            self.board[row][col] = 'VBL'
+                            if coord in unsolved_pieces:
+                                unsolved_pieces.remove(coord)
+                                continue
 
                         elif (not connected_above and (is_locked == above[2] or is_none == above[2])):
-                            
-                            if ((not connected_left and (is_locked == left[2] or is_none == left[2]))or (connected_right and is_locked == right[2])):
+                            if ((not connected_left and (is_locked == left[2] or is_none == left[2])) or (connected_right and is_locked == right[2])):
                                 self.board[row][col] = 'VBL'
                                 if coord in unsolved_pieces:
                                     unsolved_pieces.remove(coord)
@@ -331,7 +335,7 @@ class Board:
 
 
                         elif (not connected_left and (is_locked == left[2] or is_none == left[2])):
-                            if ((not connected_left and (is_locked == left[2] or is_none == left[2]))or (connected_below and is_locked == below[2])):
+                            if ((not connected_above and (is_locked == above[2] or is_none == above[2])) or (connected_below and is_locked == below[2])):
                                 self.board[row][col] = 'VBL'
                                 if coord in unsolved_pieces:
                                     unsolved_pieces.remove(coord)
@@ -341,7 +345,6 @@ class Board:
                         elif (connected_right and is_locked == right[2]):
                         
                             if ((not connected_above and (is_locked == above[2] or is_none == above[2])) or (connected_below and is_locked == below[2])):
-                                print(row,col)
                                 self.board[row][col] = 'VBL'
                                 if coord in unsolved_pieces:
                                     unsolved_pieces.remove(coord)
@@ -350,9 +353,14 @@ class Board:
 
                         
                         #VCL
+                        if (connected_left and is_locked == left[2]) and (connected_above and is_locked == above[2]):
+                            self.board[row][col] = 'VCL'
+                            if coord in unsolved_pieces:
+                                unsolved_pieces.remove(coord)
+                                continue
 
                         elif (connected_above and is_locked == above[2]):
-                            if ((connected_left and is_locked == left[2])or (not connected_right and (is_locked == right[2] or is_none == right[2]))):
+                            if ((connected_left and is_locked == left[2]) or (not connected_right and (is_locked == right[2] or is_none == right[2]))):
                                 self.board[row][col] = 'VCL'
                                 if coord in unsolved_pieces:
                                     unsolved_pieces.remove(coord)
@@ -360,7 +368,7 @@ class Board:
                                 unsolved_pieces.append(coord)
 
                         elif (connected_left and is_locked == left[2]):
-                            if (not connected_below and (is_locked == below[2] or is_none == below[2])):
+                            if (not connected_below and (is_locked == below[2] or is_none == below[2])) or (connected_above and is_locked == above[2]):
                                 self.board[row][col] = 'VCL'
                                 if coord in unsolved_pieces:
                                     unsolved_pieces.remove(coord)
@@ -393,8 +401,6 @@ class Board:
         unsolved_pieces = self.loop_restrictions(unsolved_pieces)
         
         while unsolved_pieces:
-            
-            print(unsolved_pieces)
             if unsolved_pieces == previous_unsolved_pieces:
                 iterations_without_change += 1
             else:
@@ -456,7 +462,8 @@ class Board:
                         unsolved_pieces.remove((row, col))
                         continue
 
-                    if not self.connected_left(left) and not self.connected_right(right) and is_locked == left[2] and is_locked == right[2]:
+                    if ((not self.connected_left(left) and is_locked == left[2]) or left[0] == 'F') \
+                        and ((not self.connected_right(right) and is_locked == right[2]) or right[0] == 'F'):
                         if below == 'None':
                             self.board[row][col] = 'FCL'
                             unsolved_pieces.remove((row, col))
@@ -466,7 +473,8 @@ class Board:
                             unsolved_pieces.remove((row, col))
                             continue
 
-                    if not self.connected_above(above) and not self.connected_down(below) and is_locked == above[2] and is_locked == below[2]:
+                    if ((not self.connected_above(above) and is_locked == above[2]) or above[0] == 'F') \
+                        and ((not self.connected_down(below) and is_locked == below[2]) or below[0] == 'F'):
                         if left == 'None':
                             self.board[row][col] = 'FDL'
                             unsolved_pieces.remove((row, col))
@@ -512,6 +520,7 @@ class Board:
                             unsolved_pieces.remove((row, col))
                             continue
                         if not self.connected_above(above) and is_locked == above[2]:
+                            
                             self.board[row][col] = 'FEL'
                             unsolved_pieces.remove((row, col))
                             continue
@@ -703,11 +712,11 @@ class Board:
 
                         if piece_type == 'F':
                             
-                            if right[0] == 'F' and below[0] == 'F':
-                                self.board[row][lados[i]] = 'FEL'
+                            if right[0] == 'F' and below[0] == 'F':                             
+                                self.board[row][lados[i]] = 'FCL'
                                 continue
-                            if left[0] == 'F' and below[0] == 'F':
-                                self.board[row][lados[i]] = 'FDL'
+                            if right[0] == 'F' and above[0] == 'F':
+                                self.board[row][lados[i]] = 'FBL'
                                 continue
                             if above[0] == 'F' and below[0] == 'F':
                                 
@@ -776,12 +785,12 @@ class Board:
 
                         if piece_type == 'F':
                             
-                            if right[0] == 'F' and above[0] == 'F':
-                                self.board[lados[i]][col] = 'FBL'
+                            if right[0] == 'F' and below[0] == 'F':
+                                self.board[lados[i]][col] = 'FEL'
                                 continue
 
-                            if right[0] == 'F' and below[0] == 'F':
-                                self.board[lados[i]][col] = 'FCL'
+                            if left[0] == 'F' and below[0] == 'F':
+                                self.board[lados[i]][col] = 'FDL'
                                 continue
                             if right[0] == 'F' and left[0] == 'F':
                                 self.board[lados[i]][col] = 'FBL'
@@ -824,8 +833,6 @@ class Board:
                         continue
 
         self.resolve_remaining_boarder_pieces(unlocked_pieces)
-        print(self.board)
-        print(" ")
         self.resolve_next_pieces()
         
     @staticmethod
@@ -856,7 +863,7 @@ class Board:
 
     def __str__(self):
         """Retorna uma string formatada do tabuleiro para impressao."""
-        rows = ['\t'.join(element for element in row) for row in self.board]
+        rows = ['\t'.join(element[:2] for element in row) for row in self.board]
         return '\n'.join(rows)
 
 class PipeMania(Problem):
