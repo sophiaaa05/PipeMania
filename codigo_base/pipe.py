@@ -66,6 +66,9 @@ class Board:
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posicao do tabuleiro."""
         return self.board[col][row]
+    
+    def set_value(self, row, col, value):
+        self.board[row][col] = value
         
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
@@ -97,15 +100,9 @@ class Board:
         
 
         possible_actions = []
-        for piece_list in possible_actions :
-            
-            new_piece_list = []  
-            for i in range(len(piece_list)):
-                new_action = (piece_list[0][0], piece_list[0][1], piece_list[i])
-                new_piece_list.append(new_action)
         
-            possible_actions.append(new_piece_list)
-    
+        possible_actions = [(coords[0], coords[1], val) for coords, *values in piece_list for val in values]
+
         return possible_actions  
           
     def actions_pieces(self, unsolved_pieces: list):
@@ -545,7 +542,7 @@ class Board:
         unsolved_pieces = self.loop_restrictions(unsolved_pieces)
         
         while unsolved_pieces:
-            print(unsolved_pieces)
+            
             if unsolved_pieces == previous_unsolved_pieces:
                 iterations_without_change += 1
             else:
@@ -553,7 +550,7 @@ class Board:
 
             if iterations_without_change >= 1:
                 piece = self.actions_pieces(unsolved_pieces)
-                print(piece)
+               
                 break
 
             previous_unsolved_pieces = unsolved_pieces.copy()
@@ -1031,11 +1028,13 @@ class PipeMania(Problem):
                 current_piece = state.board.get_value(row,col)
                 if current_piece[2] == 'U':
                     unsolved_pieces.append((row,col))
-        print(unsolved_pieces)
 
         possible_actions = state.board.actions_pieces( unsolved_pieces)
+        
         possible_actions_correct = state.board.correct_form(possible_actions)
 
+         
+        print(possible_actions_correct)
         return possible_actions_correct
         
     def is_correctly_connected(self, state: PipeManiaState, pipe, row: int, col: int):
@@ -1058,8 +1057,7 @@ class PipeMania(Problem):
         self.actions(state)."""
 
         row, col, new_piece = action
-        state.board[row][col] = new_piece
-        
+        state.board.set_value(row,col,new_piece)
         return state
         
     def goal_test(self, state: PipeManiaState):
@@ -1073,8 +1071,9 @@ class PipeMania(Problem):
         for row in range(board_size):
             for col in  range(board_size):
                 current_piece = state.board.get_value(row,col)
-                if current_piece[2] != is_locked:
+                if not (current_piece[2] == is_locked):
                     return False
+                
         return True
     
 
