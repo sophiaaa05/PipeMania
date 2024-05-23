@@ -1,5 +1,3 @@
-[['FDL', 'BBL', 'VEL'], ['BDL', 'LVU', 'BEL'], ['VDL', 'BCL', 'FEL']]
- 
-FDL	BBL	VEL
-BDL	LVL	BEL
-VDL	BCL	FEL
+FD	BB	VE
+BD	LV	BE
+VD	BC	FE
