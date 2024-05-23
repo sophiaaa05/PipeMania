@@ -341,7 +341,8 @@ class Board:
                         elif (connected_right and is_locked == right[2]):
                         
                             if ((not connected_above and (is_locked == above[2] or is_none == above[2])) or (connected_below and is_locked == below[2])):
-                                print(row,col)
+                                
+                                
                                 self.board[row][col] = 'VBL'
                                 if coord in unsolved_pieces:
                                     unsolved_pieces.remove(coord)
@@ -394,7 +395,7 @@ class Board:
         
         while unsolved_pieces:
             
-            print(unsolved_pieces)
+            
             if unsolved_pieces == previous_unsolved_pieces:
                 iterations_without_change += 1
             else:
@@ -824,8 +825,7 @@ class Board:
                         continue
 
         self.resolve_remaining_boarder_pieces(unlocked_pieces)
-        print(self.board)
-        print(" ")
+        
         self.resolve_next_pieces()
         
     @staticmethod
@@ -856,7 +856,7 @@ class Board:
 
     def __str__(self):
         """Retorna uma string formatada do tabuleiro para impressao."""
-        rows = ['\t'.join(element for element in row) for row in self.board]
+        rows = ['\t'.join(element[:2 ] for element in row) for row in self.board]
         return '\n'.join(rows)
 
 class PipeMania(Problem):
