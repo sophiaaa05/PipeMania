@@ -70,6 +70,30 @@ class Board:
     def set_value(self, row, col, value):
         self.board[row][col] = value
         
+    def is_correctly_connected(self, row: int, col: int):
+        """Verifica se uma peça esta conectada a toda a sua volta"""
+        
+        # Current Piece
+        current_piece = self.get_value(col,row)
+        me_connected_left = self.connected_left(current_piece)
+        me_connected_right = self.connected_right(current_piece)
+        me_connected_below = self.connected_down(current_piece)
+        me_connected_above = self.connected_above(current_piece)
+        
+        # Pieces Around
+        left, right = self.adjacent_horizontal_values(col, row)
+        above, below = self.adjacent_vertical_values(col, row)    
+        connected_left = self.connected_left(left)
+        connected_right = self.connected_right(right)
+        connected_below = self.connected_down(below)
+        connected_above = self.connected_above(above)
+        
+        if(connected_left == me_connected_left) and (connected_above == me_connected_above) \
+            and (connected_right == me_connected_right) and (connected_below == me_connected_below):
+                return True
+        
+        return False
+        
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
@@ -243,7 +267,6 @@ class Board:
     
         return possible_actions    
     
-
     def connected_down(self, pipe: str):
         return self.pipe_description[pipe[:-1]][ABOVE] == 1
     
@@ -1025,7 +1048,7 @@ class Board:
 
     def __str__(self):
         """Retorna uma string formatada do tabuleiro para impressao."""
-        rows = ['\t'.join(element[:2 ] for element in row) for row in self.board]
+        rows = ['\t'.join(element for element in row) for row in self.board]
         return '\n'.join(rows)
 
 class PipeMania(Problem):
@@ -1052,23 +1075,22 @@ class PipeMania(Problem):
         possible_actions = state.board.actions_pieces(unsolved_pieces)
         
         possible_actions_correct = state.board.correct_form(possible_actions)
-
-         
         print(possible_actions_correct)
+
         return possible_actions_correct
         
-    def is_correctly_connected(self, state: PipeManiaState, pipe, row: int, col: int):
-        """Verifica se uma peca esta corretamente conectada."""
-        desc = state.board.description
-        above, below = state.board.adjacent_vertical_values(row, col)
-        left, right = state.board.adjacent_horizontal_values(row, col)
+    # def is_correctly_connected(self, state: PipeManiaState, pipe, row: int, col: int):
+    #     """Verifica se uma peca esta corretamente conectada."""
+    #     desc = state.board.description
+    #     above, below = state.board.adjacent_vertical_values(row, col)
+    #     left, right = state.board.adjacent_horizontal_values(row, col)
 
-        return (
-            (desc[pipe [:-1]][LEFT] == (desc[left][RIGHT] if left else 0)) and
-            (desc[pipe [:-1]][ABOVE] == (desc[above][DOWN] if above else 0)) and
-            (desc[pipe [:-1]][RIGHT] == (desc[right][LEFT] if right else 0)) and
-            (desc[pipe [:-1]][DOWN] == (desc[below][ABOVE] if below else 0))
-        )
+    #     return (
+    #         (desc[pipe [:-1]][LEFT] == (desc[left][RIGHT] if left else 0)) and
+    #         (desc[pipe [:-1]][ABOVE] == (desc[above][DOWN] if above else 0)) and
+    #         (desc[pipe [:-1]][RIGHT] == (desc[right][LEFT] if right else 0)) and
+    #         (desc[pipe [:-1]][DOWN] == (desc[below][ABOVE] if below else 0))
+    #     )
 
     def result(self, state: PipeManiaState, action):
         """Retorna o estado resultante de executar a 'action' sobre
@@ -1077,9 +1099,7 @@ class PipeMania(Problem):
         self.actions(state)."""
 
         row, col, new_piece = action
-        print(new_piece)
         state.board.set_value(row,col,new_piece)
-        print(state.board.get_value(col,row))
         return state
         
     def goal_test(self, state: PipeManiaState):
@@ -1093,7 +1113,7 @@ class PipeMania(Problem):
         for row in range(board_size):
             for col in  range(board_size):
                 current_piece = state.board.get_value(col,row)
-                if not (current_piece[2] == is_locked):
+                if not (state.board.is_correctly_connected(row, col)):
                     return False
                 
         return True
