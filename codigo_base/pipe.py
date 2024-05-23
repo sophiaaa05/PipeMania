@@ -1130,7 +1130,7 @@ if __name__ == "__main__":
     initial_board = Board.parse_instance()  
     pipe_mania_problem = PipeMania(initial_board)
     
-    solution_node = depth_first_tree_search(pipe_mania_problem)
+    solution_node = breadth_first_tree_search(pipe_mania_problem)
     
     print(initial_board)
     
