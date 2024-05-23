@@ -93,6 +93,21 @@ class Board:
     def connected_down(self, pipe: str):
         return self.pipe_description[pipe[:-1]][ABOVE] == 1
     
+    def correct_form(piece_list: list):
+        
+
+        possible_actions = []
+        for piece_list in possible_actions :
+            
+            new_piece_list = []  
+            for i in range(len(piece_list)):
+                new_action = (piece_list[0][0], piece_list[0][1], piece_list[i])
+                new_piece_list.append(new_action)
+        
+            possible_actions.append(new_piece_list)
+    
+        return possible_actions  
+          
     def actions_pieces(self, unsolved_pieces: list):
         
         possible_actions = []
@@ -1002,27 +1017,21 @@ class PipeMania(Problem):
         """O construtor especifica o estado inicial."""
 
         self.initial = PipeManiaState(board)
-    
-    # def rotate_clockwise(self, name_pipe:str):
-    #     """Rotate a pipe 90 degrees clockwise."""
-    #     return Board.piece_clockwise[name_pipe]
-        
-    # def rotate_anticlockwise(self, name_pipe:str):
-    #     """Rotate a str 90 degrees anti-clockwise."""
-    #     return Board.piece_anticlockwise[name_pipe]
 
     def actions(self, state: PipeManiaState, unsolved_pieces: list):
         """Retorna uma lista de acoes que podem ser executadas a
         partir do estado passado como argumento."""
 
         possible_actions = []
-        possible_actions = state.board.actions(self, unsolved_pieces)
+        possible_actions_correct = []
+        possible_actions = state.board.actions_pieces(self, unsolved_pieces)
+        possible_actions_correct = state.board.correct_form(possible_actions)
 
-        return possible_actions
+        return possible_actions_correct
         
     def is_correctly_connected(self, state: PipeManiaState, pipe, row: int, col: int):
         """Verifica se uma peca esta corretamente conectada."""
-        desc = Board.pipe_description
+        desc = state.board.description
         above, below = state.board.adjacent_vertical_values(row, col)
         left, right = state.board.adjacent_horizontal_values(row, col)
 
@@ -1039,23 +1048,23 @@ class PipeMania(Problem):
         das presentes na lista obtida pela execucao de
         self.actions(state)."""
 
-        row, col, clockwise = action
-        new_board = [list(col) for col in state.board.board]  
-        if clockwise:
-            new_board[row][col] = self.rotate_clockwise(new_board[row][col])
-        else:
-            new_board[row][col] = self.rotate_anticlockwise(new_board[row][col])
-        return PipeManiaState(new_board)
+        row, col, new_piece = action
+        state.board[row][col] = new_piece
+        
+        return state
         
     def goal_test(self, state: PipeManiaState):
         """Retorna True se e so se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posicoes do tabuleiro
         estao preenchidas de acordo com as regras do problema."""
+        
+        #board_size = len(state.board)
+        is_locked = 'L'
 
-        for row in range(len(state.board.board)):
-            for col in range(len(state.board.board[row])):
-                pipe = state.board.get_value(row, col)
-                if not self.is_correctly_connected(state, pipe, row, col):
+        for row in range(len(state.board[0])):
+            for col in range(len(state.board[0])):
+                current_piece = state.board[row][col]
+                if current_piece[2] != is_locked:
                     return False
         return True
 
@@ -1068,7 +1077,8 @@ if __name__ == "__main__":
 
     initial_board = Board.parse_instance()  
     pipe_mania_problem = PipeMania(initial_board)
-    # solution_node = depth_first_tree_search(pipe_mania_problem)
+    
+    solution_node = depth_first_tree_search(pipe_mania_problem)
     # solution_node = depth_first_tree_search(pipe_mania_problem)
     # if solution_node:     
     #     solution_board = solution_node.state.board
