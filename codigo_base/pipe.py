@@ -93,7 +93,7 @@ class Board:
     def connected_down(self, pipe: str):
         return self.pipe_description[pipe[:-1]][ABOVE] == 1
     
-    def correct_form(piece_list: list):
+    def correct_form(self,piece_list: list):
         
 
         possible_actions = []
@@ -1018,13 +1018,22 @@ class PipeMania(Problem):
 
         self.initial = PipeManiaState(board)
 
-    def actions(self, state: PipeManiaState, unsolved_pieces: list):
+    def actions(self, state: PipeManiaState):
         """Retorna uma lista de acoes que podem ser executadas a
         partir do estado passado como argumento."""
 
         possible_actions = []
         possible_actions_correct = []
-        possible_actions = state.board.actions_pieces(self, unsolved_pieces)
+        unsolved_pieces = []
+
+        for row in range(len(state.board.board)):
+            for col in range(len(state.board.board)):
+                current_piece = state.board.get_value(row,col)
+                if current_piece[2] == 'U':
+                    unsolved_pieces.append((row,col))
+        print(unsolved_pieces)
+
+        possible_actions = state.board.actions_pieces( unsolved_pieces)
         possible_actions_correct = state.board.correct_form(possible_actions)
 
         return possible_actions_correct
@@ -1058,19 +1067,21 @@ class PipeMania(Problem):
         um estado objetivo. Deve verificar se todas as posicoes do tabuleiro
         estao preenchidas de acordo com as regras do problema."""
         
-        #board_size = len(state.board)
+        board_size = len(state.board.board)
         is_locked = 'L'
 
-        for row in range(len(state.board[0])):
-            for col in range(len(state.board[0])):
-                current_piece = state.board[row][col]
+        for row in range(board_size):
+            for col in  range(board_size):
+                current_piece = state.board.get_value(row,col)
                 if current_piece[2] != is_locked:
                     return False
         return True
+    
 
     def h(self, node: Node):
         """Funcao heuristica utilizada para a procura A*."""
         # TODO
+        
         pass
 
 if __name__ == "__main__":
@@ -1079,13 +1090,6 @@ if __name__ == "__main__":
     pipe_mania_problem = PipeMania(initial_board)
     
     solution_node = depth_first_tree_search(pipe_mania_problem)
-    # solution_node = depth_first_tree_search(pipe_mania_problem)
-    # if solution_node:     
-    #     solution_board = solution_node.state.board
-    #     print(solution_board)
-    # is_goal = pipe_mania_problem.goal_test(pipe_mania_problem.initial)
     
-    # Imprimir o resultado
-   # print("O estado inicial é um estado objetivo?", is_goal)
     print(initial_board)
     pass
