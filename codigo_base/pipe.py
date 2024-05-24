@@ -6,7 +6,7 @@
 # 106748 Ines Antunes
 # 106369 Sophia Alencar
 
-
+import copy
 from sys import stdin
 from search import (
     Problem,
@@ -75,11 +75,10 @@ class Board:
         
         # Current Piece
         current_piece = self.get_value(col,row)
-        me_connected_left = self.connected_left(current_piece)
-        me_connected_right = self.connected_right(current_piece)
-        me_connected_below = self.connected_down(current_piece)
-        me_connected_above = self.connected_above(current_piece)
-        
+        me_connected_left = self.pipe_description[current_piece[:-1]][LEFT]
+        me_connected_right = self.pipe_description[current_piece[:-1]][RIGHT]
+        me_connected_below = self.pipe_description[current_piece[:-1]][DOWN]
+        me_connected_above = self.pipe_description[current_piece[:-1]][ABOVE]
         # Pieces Around
         left, right = self.adjacent_horizontal_values(col, row)
         above, below = self.adjacent_vertical_values(col, row)    
@@ -87,12 +86,18 @@ class Board:
         connected_right = self.connected_right(right)
         connected_below = self.connected_down(below)
         connected_above = self.connected_above(above)
-        
+        # print(current_piece)
+        # print(me_connected_left == connected_left)
+        # print(me_connected_above == connected_above)
+        # print(me_connected_right == connected_right)
+        # print(me_connected_below == connected_below)
+
         if(connected_left == me_connected_left) and (connected_above == me_connected_above) \
             and (connected_right == me_connected_right) and (connected_below == me_connected_below):
-                return True
-        
+            return True
+            
         return False
+
         
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
@@ -116,6 +121,9 @@ class Board:
     
     def connected_above(self, pipe: str):
         return self.pipe_description[pipe[:-1]][DOWN] == 1
+    
+    def connected_down(self, pipe: str):
+        return self.pipe_description[pipe[:-1]][ABOVE] == 1
     
     def actions_pieces(self, unsolved_pieces: list):
         
@@ -266,10 +274,7 @@ class Board:
             possible_actions.append(actions_for_piece)
     
         return possible_actions    
-    
-    def connected_down(self, pipe: str):
-        return self.pipe_description[pipe[:-1]][ABOVE] == 1
-    
+      
     def correct_form(self,piece_list: list):
         
         possible_actions = []
@@ -1097,10 +1102,14 @@ class PipeMania(Problem):
         'state' passado como argumento. A acao a executar deve ser uma
         das presentes na lista obtida pela execucao de
         self.actions(state)."""
-
+        
+        new_board = copy.deepcopy(state.board)
+        new_state = PipeManiaState(new_board)
+        
         row, col, new_piece = action
-        state.board.set_value(row,col,new_piece)
-        return state
+        new_state.board.set_value(row,col,new_piece)
+        
+        return new_state
         
     def goal_test(self, state: PipeManiaState):
         """Retorna True se e so se o estado passado como argumento é
@@ -1108,11 +1117,9 @@ class PipeMania(Problem):
         estao preenchidas de acordo com as regras do problema."""
         
         board_size = len(state.board.board)
-        is_locked = 'L'
 
         for row in range(board_size):
             for col in  range(board_size):
-                current_piece = state.board.get_value(col,row)
                 if not (state.board.is_correctly_connected(row, col)):
                     return False
                 
@@ -1130,7 +1137,7 @@ if __name__ == "__main__":
     initial_board = Board.parse_instance()  
     pipe_mania_problem = PipeMania(initial_board)
     
-    solution_node = breadth_first_tree_search(pipe_mania_problem)
+    solution_node = depth_first_tree_search(pipe_mania_problem)
     
     print(initial_board)
     
