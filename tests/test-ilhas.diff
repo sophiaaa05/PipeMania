@@ -1,0 +1,9 @@
+2,4c2,4
+< BD	BC	BC	BE
+< BD	BB	BB	BE
+< VD	VC	VD	VC
+\ No newline at end of file
+---
+> BD	BE  BD  BE
+> BD	BE  BD  BE
+> VD	VC	VD	VC

@@ -4,6 +4,11 @@ tests/test-03.myout
 tests/test-04.myout
 tests/test-05.myout
 tests/test-06.myout
+Traceback (most recent call last):
+  File "codigo_base/pipe.py", line 1163, in <module>
+    print(solution_node.state.board)
+AttributeError: 'NoneType' object has no attribute 'state'
 tests/test-07.myout
 tests/test-08.myout
 tests/test-09.myout
+tests/test-ilhas.myout

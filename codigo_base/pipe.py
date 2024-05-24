@@ -6,7 +6,6 @@
 # 106748 Ines Antunes
 # 106369 Sophia Alencar
 
-import copy
 from sys import stdin
 from search import (
     Problem,
@@ -63,6 +62,16 @@ class Board:
         self.board = board
         self.init_board()
 
+    def deepcopy(self):
+        grid_copy = []
+        for row in self.board:
+            row_copy = []
+            for item in row:
+                row_copy.append(str(item))
+            grid_copy.append(row_copy)
+
+        return Board(grid_copy)
+
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posicao do tabuleiro."""
         return self.board[col][row]
@@ -83,12 +92,23 @@ class Board:
         me_connected_above = self.pipe_description[current_piece[:-1]][ABOVE]
         # Pieces Around
         left, right = self.adjacent_horizontal_values(col, row)
-        above, below = self.adjacent_vertical_values(col, row)    
+        above, below = self.adjacent_vertical_values(col, row)
         connected_left = self.connected_left(left)
         connected_right = self.connected_right(right)
         connected_below = self.connected_down(below)
         connected_above = self.connected_above(above)
+        
+        
+        # print(left)
+        # print(above)
+        # print(right)
+        # print(below)
+        # print(row,col)
         # print(current_piece)
+        # print(me_connected_left)
+        # print(me_connected_above)
+        # print(me_connected_right)
+        # print(me_connected_below)
         # print(me_connected_left == connected_left)
         # print(me_connected_above == connected_above)
         # print(me_connected_right == connected_right)
@@ -99,8 +119,7 @@ class Board:
             return True
             
         return False
-
-        
+    
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
@@ -1105,15 +1124,11 @@ class PipeMania(Problem):
         das presentes na lista obtida pela execucao de
         self.actions(state)."""
         
-        new_board = copy.deepcopy(state.board)
+        new_board = state.board.deepcopy()
         new_state = PipeManiaState(new_board)
         
         row, col, new_piece = action
         new_state.board.set_value(row,col,new_piece)
-        if row == 1 and col == 4:
-            print(new_state.board)
-            print(" ")
-        
         return new_state
         
     def goal_test(self, state: PipeManiaState):
@@ -1123,15 +1138,10 @@ class PipeMania(Problem):
         
         board_size = len(state.board.board)
 
+        #print(state.board)
         for row in range(board_size):
             for col in  range(board_size):
                 if not (state.board.is_correctly_connected(row, col)):
-                    if row == 1 and col == 4:
-                        print("here5")
-                        print(state.board)
-                        print(" ")
-                    
-                    
                     return False
         
         return True
@@ -1150,5 +1160,5 @@ if __name__ == "__main__":
     
     solution_node = depth_first_tree_search(pipe_mania_problem)
     
-    print(initial_board)
+    print(solution_node.state.board)
     
