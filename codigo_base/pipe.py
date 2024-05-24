@@ -69,6 +69,8 @@ class Board:
     
     def set_value(self, row, col, value):
         self.board[row][col] = value
+        # if row==1 and col ==4:
+        #     print(self.board[row][col])
         
     def is_correctly_connected(self, row: int, col: int):
         """Verifica se uma peça esta conectada a toda a sua volta"""
@@ -606,9 +608,9 @@ class Board:
     
     def resolve_remaining_boarder_pieces(self, unsolved_pieces: list):
         board_size = len(self.board) - 1
-        unsolved_pieces = list(set(unsolved_pieces))  # Remove duplicates initially
+        unsolved_pieces = list(set(unsolved_pieces))  
 
-        previous_unsolved_pieces = None  # To store the state from the last iteration
+        previous_unsolved_pieces = None  
         iterations_without_change = 0
 
         while unsolved_pieces:
@@ -1080,7 +1082,7 @@ class PipeMania(Problem):
         possible_actions = state.board.actions_pieces(unsolved_pieces)
         
         possible_actions_correct = state.board.correct_form(possible_actions)
-        print(possible_actions_correct)
+        # print(possible_actions_correct)
 
         return possible_actions_correct
         
@@ -1108,6 +1110,9 @@ class PipeMania(Problem):
         
         row, col, new_piece = action
         new_state.board.set_value(row,col,new_piece)
+        if row == 1 and col == 4:
+            print(new_state.board)
+            print(" ")
         
         return new_state
         
@@ -1121,8 +1126,14 @@ class PipeMania(Problem):
         for row in range(board_size):
             for col in  range(board_size):
                 if not (state.board.is_correctly_connected(row, col)):
+                    if row == 1 and col == 4:
+                        print("here5")
+                        print(state.board)
+                        print(" ")
+                    
+                    
                     return False
-                
+        
         return True
     
 
